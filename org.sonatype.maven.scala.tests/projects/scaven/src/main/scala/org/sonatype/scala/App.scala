@@ -4,6 +4,9 @@ package org.sonatype.scala;
  * Hello world!
  *
  */
-object App extends Application {
-  println( "Hello World!" );
+object App {  
+  def main(args: Array[String]) {
+    val wg = new WorldlyGreeter("Hello")
+    wg.greet()
+  }
 }

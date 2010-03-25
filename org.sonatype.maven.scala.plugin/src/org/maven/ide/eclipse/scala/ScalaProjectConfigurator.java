@@ -11,7 +11,10 @@ package org.maven.ide.eclipse.scala;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -23,25 +26,18 @@ import org.maven.ide.eclipse.project.IMavenProjectFacade;
 import org.maven.ide.eclipse.project.configurator.AbstractProjectConfigurator;
 import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 
-/**
- * Configures AJDT project according to aspectj-maven-plugin configuration from pom.xml. Work in progress, most of
- * aspectj-maven-plugin configuration parameters is not supported yet.
- * 
- * @see http://mojo.codehaus.org/aspectj-maven-plugin/compile-mojo.html
- * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=160393
- * @author Igor Fedorenko
- * @author Eugene Kuleshov
- */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
   public static String ID_NATURE = "ch.epfl.lamp.sdt.core.scalanature";
+  public static String MOJO_GROUP_ID = "org.scala-tools";
+  public static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
+  
   //public static String SCALA_PLUGIN_ID_BUILDER = "ch.epfl.lamp.sdt.core.scalabuilder";
 
-  public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor)
-      throws CoreException {
+  public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
     MavenProject mavenProject = request.getMavenProject();
     IProject project = request.getProject();
-    if(!project.hasNature(ID_NATURE)) {
+    if(!project.hasNature(ID_NATURE) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
       addNature(project, ID_NATURE, monitor);
     }
   }
@@ -75,7 +71,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath,
       IProgressMonitor monitor) throws CoreException {
     // TODO Auto-generated method configureRawClasspath
-    
+
   }
 
   static boolean isAjdtProject(IProject project) {
@@ -85,4 +81,30 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
       return false;
     }
   }
+
+  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor) 
+    throws CoreException {
+    List<Plugin> plugins = facade.getMavenProject(monitor).getBuildPlugins();
+    if(plugins != null) {
+      for(Plugin plugin : plugins) {
+        if(isMavenBundlePluginMojo(plugin) && !plugin.getExecutions().isEmpty()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  protected boolean isMavenBundlePluginMojo(MojoExecution execution) {
+    return isMavenBundlePluginMojo(execution.getGroupId(), execution.getArtifactId());
+  }
+
+  private boolean isMavenBundlePluginMojo(Plugin plugin) {
+    return isMavenBundlePluginMojo(plugin.getGroupId(), plugin.getArtifactId());
+  }
+
+  private boolean isMavenBundlePluginMojo(String groupId, String artifactId) {
+    return MOJO_GROUP_ID.equals(groupId) && MOJO_ARTIFACT_ID.equals(artifactId);
+  }
+
 }
