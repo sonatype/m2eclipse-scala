@@ -48,7 +48,7 @@ public class ScalaProjectConfiguratorTest extends AbstractMavenProjectTestCase {
 
     IJavaProject javaProject = JavaCore.create(project);
     List<IClasspathEntry> sources = getSources(javaProject.getRawClasspath());
-    assertEquals(1, sources.size());
+    assertEquals(2, sources.size());
     assertEquals(project.getFolder("src/main/scala").getFullPath(), sources.get(0).getPath());
   }
 

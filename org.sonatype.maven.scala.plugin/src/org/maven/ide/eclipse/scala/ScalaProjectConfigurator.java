@@ -11,7 +11,6 @@ package org.maven.ide.eclipse.scala;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IProject;
@@ -19,7 +18,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.maven.ide.eclipse.jdt.IClasspathDescriptor;
-import org.maven.ide.eclipse.jdt.IClasspathEntryDescriptor;
 import org.maven.ide.eclipse.jdt.IJavaProjectConfigurator;
 import org.maven.ide.eclipse.project.IMavenProjectFacade;
 import org.maven.ide.eclipse.project.configurator.AbstractProjectConfigurator;
@@ -43,32 +41,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
       throws CoreException {
     MavenProject mavenProject = request.getMavenProject();
     IProject project = request.getProject();
-    /*
-    if(ScalaPluginConfiguration.isAspectJProject(mavenProject, project)) {
-      if(!project.hasNature(ID_NATURE)) {
-        addNature(project, ID_NATURE, monitor);
-      }
-    } else {
-      removeAjdtNature(project);
-    }
-    */
-  }
-
-  private void removeAjdtNature(IProject project) throws CoreException {
-    IProjectDescription description = project.getDescription();
-    ArrayList<String> natures = new ArrayList<String>(Arrays.asList(description.getNatureIds()));
-    boolean updated = false;
-    for(Iterator<String> it = natures.iterator(); it.hasNext();) {
-      String nature = it.next();
-      if(ID_NATURE.equals(nature)) {
-        it.remove();
-        updated = true;
-      }
-    }
-
-    if(updated) {
-      description.setNatureIds(natures.toArray(new String[natures.size()]));
-      project.setDescription(description, null);
+    if(!project.hasNature(ID_NATURE)) {
+      addNature(project, ID_NATURE, monitor);
     }
   }
 
