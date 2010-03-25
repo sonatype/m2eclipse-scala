@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.sonatype.maven.scala</groupId>
+  <artifactId>scala</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Idiom</name>
+  <packaging>pom</packaging>
+  <modules>
+    <module>org.sonatype.maven.scala.plugin</module>
+    <module>org.sonatype.maven.scala.feature</module>
+  </modules>
+  
+  <properties>
+    <tychoVersion>0.8.0</tychoVersion>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tychoVersion}</version>
+        <extensions>true</extensions>
+      </plugin>    
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tychoVersion}</version>
+        <configuration>
+          <resolver>p2</resolver>
+          <environments>
+            <environment>
+              <os>linux</os>
+              <ws>gtk</ws>
+              <arch>x86_64</arch>
+            </environment>
+            <environment>
+              <os>win32</os>
+              <ws>win32</ws>
+              <arch>x86</arch>
+            </environment>
+            <environment>
+              <os>macosx</os>
+              <ws>cocoa</ws>
+              <arch>x86</arch>
+            </environment>
+          </environments>
+        </configuration>
+      </plugin>     
+    </plugins>      
+  </build>
+  
+  <repositories>
+    <repository>
+      <id>galileo</id>
+      <url>http://download.eclipse.org/releases/galileo</url>
+      <layout>p2</layout>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>tycho</id>
+      <url>http://repository.sonatype.org/content/repositories/all-001//</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository> 
+  </pluginRepositories>
+</project>
