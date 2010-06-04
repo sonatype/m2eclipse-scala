@@ -27,6 +27,10 @@ import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 
 //TODO check the jre/java version compliance (>= 1.5)
 //TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
+/**
+ * @author sonatype (http://github.com/sonatype/m2e-scala)
+ * @author davidB (http://github.com/davidB/m2e-scala)
+ */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
   public static String ID_NATURE = "ch.epfl.lamp.sdt.core.scalanature";

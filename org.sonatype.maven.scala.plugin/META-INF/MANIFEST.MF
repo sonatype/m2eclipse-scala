@@ -12,5 +12,5 @@ Require-Bundle:
  org.maven.ide.eclipse,
  org.maven.ide.eclipse.maven_embedder,
  org.maven.ide.eclipse.jdt
-Bundle-Vendor: Sonatype, Inc.
+Bundle-Vendor: Sonatype, Inc. / DavidB
 Export-Package: org.maven.ide.eclipse.scala
