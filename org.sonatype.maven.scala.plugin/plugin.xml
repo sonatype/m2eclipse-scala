@@ -10,4 +10,7 @@
             priority="101">
       </configurator>
    </extension>
+   <extension point="org.maven.ide.eclipse.archetypeCatalogs">
+      <remote description="Scala-tools.org Catalog" url="http://scala-tools.org/"/>
+   </extension>
 </plugin>
