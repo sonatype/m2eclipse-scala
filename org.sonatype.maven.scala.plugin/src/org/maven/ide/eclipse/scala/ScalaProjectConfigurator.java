@@ -21,17 +21,19 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.maven.ide.eclipse.jdt.IClasspathDescriptor;
+import org.maven.ide.eclipse.jdt.IClasspathEntryDescriptor;
 import org.maven.ide.eclipse.jdt.IJavaProjectConfigurator;
 import org.maven.ide.eclipse.project.IMavenProjectFacade;
 import org.maven.ide.eclipse.project.configurator.AbstractProjectConfigurator;
 import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 
+//TODO : check the jre/java version compliance (>= 1.5)
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
   public static String ID_NATURE = "ch.epfl.lamp.sdt.core.scalanature";
   public static String MOJO_GROUP_ID = "org.scala-tools";
   public static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
-  
+
   //public static String SCALA_PLUGIN_ID_BUILDER = "ch.epfl.lamp.sdt.core.scalabuilder";
 
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
@@ -44,7 +46,21 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor)
       throws CoreException {
-
+    if(isScalaProject(facade.getProject())) {
+      classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
+        public boolean accept(IClasspathEntryDescriptor descriptor) {
+          boolean back = "org.scala-lang".equals(descriptor.getGroupId());
+          //TODO, use content of Scala Library Container instead of hardcoded value
+          back = back && (
+              "scala-library".equals(descriptor.getArtifactId())
+              || "scala-compiler".equals(descriptor.getArtifactId())
+              || "scala-dbc".equals(descriptor.getArtifactId())
+              || "scala-swing".equals(descriptor.getArtifactId())
+          );
+          return back;
+        }
+      });
+    }
     /*
     if(isAjdtProject(facade.getProject())) {
       // TODO cache in facade.setSessionProperty
@@ -74,7 +90,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
   }
 
-  static boolean isAjdtProject(IProject project) {
+  static boolean isScalaProject(IProject project) {
     try {
       return project != null && project.isAccessible() && project.hasNature(ID_NATURE);
     } catch(CoreException e) {
@@ -82,7 +98,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
   }
 
-  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor) 
+  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor)
     throws CoreException {
     List<Plugin> plugins = facade.getMavenProject(monitor).getBuildPlugins();
     if(plugins != null) {
