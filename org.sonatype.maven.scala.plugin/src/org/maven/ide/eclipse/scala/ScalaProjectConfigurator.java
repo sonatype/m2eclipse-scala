@@ -20,6 +20,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.maven.ide.eclipse.jdt.IClasspathDescriptor;
 import org.maven.ide.eclipse.jdt.IClasspathEntryDescriptor;
 import org.maven.ide.eclipse.jdt.IJavaProjectConfigurator;
@@ -27,7 +31,8 @@ import org.maven.ide.eclipse.project.IMavenProjectFacade;
 import org.maven.ide.eclipse.project.configurator.AbstractProjectConfigurator;
 import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 
-//TODO : check the jre/java version compliance (>= 1.5)
+//TODO check the jre/java version compliance (>= 1.5)
+//TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
   public static String ID_NATURE = "ch.epfl.lamp.sdt.core.scalanature";
@@ -47,41 +52,56 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor)
       throws CoreException {
     if(isScalaProject(facade.getProject())) {
-      classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
-        public boolean accept(IClasspathEntryDescriptor descriptor) {
-          boolean back = "org.scala-lang".equals(descriptor.getGroupId());
-          //TODO, use content of Scala Library Container instead of hardcoded value
-          back = back && (
-              "scala-library".equals(descriptor.getArtifactId())
-              || "scala-compiler".equals(descriptor.getArtifactId())
-              || "scala-dbc".equals(descriptor.getArtifactId())
-              || "scala-swing".equals(descriptor.getArtifactId())
-          );
-          return back;
-        }
-      });
+      removeScalaFromMavenContainer(classpath);
+      sortContainerScalaJre(facade, monitor);
     }
-    /*
-    if(isAjdtProject(facade.getProject())) {
-      // TODO cache in facade.setSessionProperty
-      ScalaPluginConfiguration config = ScalaPluginConfiguration.create( //
-          facade.getMavenProject(monitor), facade.getProject());
-      if(config != null) {
-        for (IClasspathEntryDescriptor descriptor : classpath.getEntryDescriptors()) {
-          String key = descriptor.getGroupId() + ":" + descriptor.getArtifactId();
-          Set<String> aspectLibraries = config.getAspectLibraries(); // from pom.xml
-          if(aspectLibraries != null && aspectLibraries.contains(key)) {
-            descriptor.addClasspathAttribute(AspectJCorePreferences.ASPECTPATH_ATTRIBUTE);
-            continue;
-          }
-          Set<String> inpathDependencies = config.getInpathDependencies();
-          if (inpathDependencies != null && inpathDependencies.contains(key)) {
-            descriptor.addClasspathAttribute(AspectJCorePreferences.INPATH_ATTRIBUTE);
-          }
+  }
+
+  private void removeScalaFromMavenContainer(IClasspathDescriptor classpath) {
+    classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
+      public boolean accept(IClasspathEntryDescriptor descriptor) {
+        boolean back = "org.scala-lang".equals(descriptor.getGroupId());
+        //TODO, use content of Scala Library Container instead of hardcoded value
+        back = back && (
+            "scala-library".equals(descriptor.getArtifactId())
+            || "scala-compiler".equals(descriptor.getArtifactId())
+            || "scala-dbc".equals(descriptor.getArtifactId())
+            || "scala-swing".equals(descriptor.getArtifactId())
+        );
+        return back;
+      }
+    });
+  }
+
+  /**
+   * Check and reorder Containers : "Scala Lib" should be before "JRE Sys",
+   * else 'Run Scala Application' set Boot Entries JRE before Scala and failed with scala.* NotFound Exception.
+   */
+  private void sortContainerScalaJre(IMavenProjectFacade facade, IProgressMonitor monitor) throws CoreException {
+    IProject project = facade.getProject();
+    IJavaProject javaProject = JavaCore.create(project);
+    IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
+
+    int posScalaContainer = -1;
+    int posJreContainer = -1;
+    for (int i = 0; i < rawClasspath.length; i++) {
+      IClasspathEntry e = rawClasspath[i];
+      if (IClasspathEntry.CPE_CONTAINER == e.getEntryKind()) {
+        if ("org.eclipse.jdt.launching.JRE_CONTAINER".equals(e.getPath().segment(0))) {
+          posJreContainer = i;
+        }
+        if ("ch.epfl.lamp.sdt.launching.SCALA_CONTAINER".equals(e.getPath().segment(0))) {
+          posScalaContainer = i;
         }
       }
     }
-    */
+    if (posScalaContainer != -1 && posJreContainer != -1 && posScalaContainer > posJreContainer) {
+      // swap position to have scalaContainer first
+      IClasspathEntry tmp = rawClasspath[posScalaContainer];
+      rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
+      rawClasspath[posJreContainer]= tmp;
+      javaProject.setRawClasspath(rawClasspath, monitor);
+    }
   }
 
   public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath,
