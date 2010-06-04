@@ -8,19 +8,13 @@
 
 package org.maven.ide.eclipse.scala;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -42,7 +36,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   //public static String SCALA_PLUGIN_ID_BUILDER = "ch.epfl.lamp.sdt.core.scalabuilder";
 
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
-    MavenProject mavenProject = request.getMavenProject();
+    //MavenProject mavenProject = request.getMavenProject();
     IProject project = request.getProject();
     if(!project.hasNature(ID_NATURE) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
       addNature(project, ID_NATURE, monitor);
