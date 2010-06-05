@@ -13,8 +13,11 @@ import java.util.List;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -27,8 +30,11 @@ import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 
 //TODO check the jre/java version compliance (>= 1.5)
 //TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
+//TODO check that pom.xml and ScalaLib Container declare the same scala version
+//TODO keep sync scala-compiler configuration between pom.xml and scala-plugin ? (sync bi-direction) ?
+//TODO ask sonatype/mailing-list about how to retreive maven plugin configuration, like additional sourceDirectory
 /**
- * @author sonatype (http://github.com/sonatype/m2e-scala)
+ * @author Sonatype Inc (http://github.com/sonatype/m2e-scala)
  * @author davidB (http://github.com/davidB/m2e-scala)
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
@@ -47,12 +53,80 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
   }
 
-  public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor)
-      throws CoreException {
+  public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
     if(isScalaProject(facade.getProject())) {
       removeScalaFromMavenContainer(classpath);
+      addDefaultScalaSourceDirs(facade, classpath, monitor);
       sortContainerScalaJre(facade, monitor);
     }
+  }
+
+  /**
+   * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
+   *
+   * @param facade
+   * @throws CoreException
+   */
+  //TODO take a look at http://github.com/sonatype/m2eclipse-extras/blob/master/org.maven.ide.eclipse.temporary.mojos/src/org/maven/ide/eclipse/buildhelper/BuildhelperProjectConfigurator.java
+  private void addDefaultScalaSourceDirs(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
+    IProject project = facade.getProject();
+    IJavaProject javaProject = JavaCore.create(project);
+    IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
+    int initSize = rawClasspath.length;
+
+    // can't use classpath.addSourceEntry because source entry are append under "Maven Dependencies" container
+    IResource defaultMainSrc = facade.getProject().findMember("src/main/scala");
+    if (defaultMainSrc.exists()) {
+      IPath p = defaultMainSrc.getFullPath();
+      rawClasspath = addSourceEntry(rawClasspath, p, facade.getOutputLocation());
+    }
+
+    IResource defaultTestSrc = facade.getProject().findMember("src/test/scala");
+    if (defaultTestSrc.exists()) {
+      IPath p = defaultTestSrc.getFullPath();
+      rawClasspath = addSourceEntry(rawClasspath, p, facade.getTestOutputLocation());
+    }
+
+    if (rawClasspath.length != initSize) {
+      javaProject.setRawClasspath(rawClasspath, monitor);
+    }
+
+  }
+
+  private IClasspathEntry[] addSourceEntry(IClasspathEntry[] rawClasspath, IPath sourcePath, IPath outputLocation) {
+//    if (!classpath.containsPath(sourcePath)) {
+//      classpath.addSourceEntry(sourcePath, facade.getTestOutputLocation(), false);
+//    }
+    IClasspathEntry[] back = rawClasspath;
+    IClasspathEntry entry = JavaCore.newSourceEntry(sourcePath, //
+        new IPath[0], //
+        new IPath[0], //
+        outputLocation, //
+        new IClasspathAttribute[0]
+    );
+    if (!contains(rawClasspath, entry)) {
+      back = add(rawClasspath, entry);
+    }
+    return back;
+  }
+
+  private boolean contains(IClasspathEntry[] rawClasspath, IClasspathEntry entry) {
+    if (entry != null && rawClasspath != null) {
+      for(IClasspathEntry e : rawClasspath) {
+        if (entry.equals(e)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  //TODO add source in the right position (near other source folder and in the alphanum order
+  private IClasspathEntry[] add(IClasspathEntry[] rawClasspath, IClasspathEntry entry) {
+    IClasspathEntry[] back = new IClasspathEntry[rawClasspath.length + 1];
+    back[0] = entry;
+    System.arraycopy(rawClasspath, 0, back, 1, rawClasspath.length);
+    return back;
   }
 
   private void removeScalaFromMavenContainer(IClasspathDescriptor classpath) {
