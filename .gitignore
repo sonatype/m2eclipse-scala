@@ -1,0 +1,46 @@
+# use glob syntax.
+syntax: glob
+*.ser
+*.class
+*~
+*.bak
+*.off
+*.old
+
+# eclipse conf file
+#.settings
+#.classpath
+#.project
+#.manager
+
+# build by samples usage
+samples/*/.settings
+samples/*/.classpath
+samples/*/.project
+samples/*/.scala_dependencies
+
+# building
+target
+build
+null
+tmp*
+temp*
+dist
+test-output
+build.log
+TestJavaClass*.java
+# other scm
+.svn
+.CVS
+.hg*
+
+# switch to regexp syntax.
+#  syntax: regexp
+#  ^\.pc/
+
+#SHITTY output not in target directory
+build.log
+
+/maven-scala-plugin.iml
+/maven-scala-plugin.ipr
+/maven-scala-plugin.iws
