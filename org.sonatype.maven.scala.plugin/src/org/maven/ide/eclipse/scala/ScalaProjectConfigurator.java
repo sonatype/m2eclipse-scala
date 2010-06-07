@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,6 +45,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
   //public static String SCALA_PLUGIN_ID_BUILDER = "ch.epfl.lamp.sdt.core.scalabuilder";
 
+  @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
     //MavenProject mavenProject = request.getMavenProject();
     IProject project = request.getProject();
@@ -53,11 +54,14 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
   }
 
+  /**
+   * configure Classpath : contain of "Maven Dependencies" Librairies Container.
+   */
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
     if(isScalaProject(facade.getProject())) {
       removeScalaFromMavenContainer(classpath);
       addDefaultScalaSourceDirs(facade, classpath, monitor);
-      sortContainerScalaJre(facade, monitor);
+      sortContainerScalaJre(facade.getProject(), monitor);
     }
   }
 
@@ -75,14 +79,14 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     int initSize = rawClasspath.length;
 
     // can't use classpath.addSourceEntry because source entry are append under "Maven Dependencies" container
-    IResource defaultMainSrc = facade.getProject().findMember("src/main/scala");
-    if (defaultMainSrc.exists()) {
+    IFolder defaultMainSrc = project.getFolder("src/main/scala");
+    if (defaultMainSrc != null && defaultMainSrc.exists()) {
       IPath p = defaultMainSrc.getFullPath();
       rawClasspath = addSourceEntry(rawClasspath, p, facade.getOutputLocation());
     }
 
-    IResource defaultTestSrc = facade.getProject().findMember("src/test/scala");
-    if (defaultTestSrc.exists()) {
+    IFolder defaultTestSrc = project.getFolder("src/test/scala");
+    if (defaultTestSrc != null && defaultTestSrc.exists()) {
       IPath p = defaultTestSrc.getFullPath();
       rawClasspath = addSourceEntry(rawClasspath, p, facade.getTestOutputLocation());
     }
@@ -145,12 +149,50 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     });
   }
 
+//  /**
+//   * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
+//   *
+//   * @param facade
+//   * @throws CoreException
+//   */
+//  //TODO take a look at http://github.com/sonatype/m2eclipse-extras/blob/master/org.maven.ide.eclipse.temporary.mojos/src/org/maven/ide/eclipse/buildhelper/BuildhelperProjectConfigurator.java
+//  private void addDefaultScalaSourceDirs(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
+//    IProject project = facade.getProject();
+//
+//    // can't use classpath.addSourceEntry because source entry are append under "Maven Dependencies" container
+//    IResource defaultMainSrc = project.findMember("src/main/scala");
+//    if (defaultMainSrc != null && defaultMainSrc.exists()) {
+//      IPath p = defaultMainSrc.getFullPath();
+//      classpath.addSourceEntry(p, facade.getOutputLocation(), false);
+//    }
+//
+//    IResource defaultTestSrc = project.findMember("src/test/scala");
+//    if (defaultTestSrc != null && defaultTestSrc.exists()) {
+//      IPath p = defaultTestSrc.getFullPath();
+//      classpath.addSourceEntry(p, facade.getTestOutputLocation(), false);
+//    }
+//  }
+
+
+  /**
+   * Not called with m2eclipse 0.10.0
+   * Configure the eclipse project classpath (similar to eclipse IJavaProject.getRawClasspath).
+   */
+  public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
+//    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//    IProject project = request.getProject();
+//    if(isScalaProject(project)) {
+//      addDefaultScalaSourceDirs(request.getMavenProjectFacade(), classpath, monitor);
+//      sortContainerScalaJre(project, monitor);
+//    }
+
+  }
+
   /**
    * Check and reorder Containers : "Scala Lib" should be before "JRE Sys",
    * else 'Run Scala Application' set Boot Entries JRE before Scala and failed with scala.* NotFound Exception.
    */
-  private void sortContainerScalaJre(IMavenProjectFacade facade, IProgressMonitor monitor) throws CoreException {
-    IProject project = facade.getProject();
+  private void sortContainerScalaJre(IProject project, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
 
@@ -174,12 +216,6 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
       rawClasspath[posJreContainer]= tmp;
       javaProject.setRawClasspath(rawClasspath, monitor);
     }
-  }
-
-  public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath,
-      IProgressMonitor monitor) throws CoreException {
-    // TODO Auto-generated method configureRawClasspath
-
   }
 
   static boolean isScalaProject(IProject project) {
