@@ -21,12 +21,17 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.maven.ide.eclipse.jdt.IClasspathDescriptor;
 import org.maven.ide.eclipse.jdt.IClasspathEntryDescriptor;
 import org.maven.ide.eclipse.jdt.IJavaProjectConfigurator;
 import org.maven.ide.eclipse.project.IMavenProjectFacade;
 import org.maven.ide.eclipse.project.configurator.AbstractProjectConfigurator;
 import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
+
+import scala.tools.eclipse.ScalaPlugin;
+
+//import scala.tools.eclipse.ScalaLibraryPluginDependencyUtils;
 
 //TODO check the jre/java version compliance (>= 1.5)
 //TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
@@ -39,7 +44,7 @@ import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
-  public static String ID_NATURE = "ch.epfl.lamp.sdt.core.scalanature";
+  public static String NATURE_ID = ScalaPlugin.plugin().natureId();//"ch.epfl.lamp.sdt.core.scalanature";
   public static String MOJO_GROUP_ID = "org.scala-tools";
   public static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
 
@@ -47,10 +52,15 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
-    //MavenProject mavenProject = request.getMavenProject();
-    IProject project = request.getProject();
-    if(!project.hasNature(ID_NATURE) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
-      addNature(project, ID_NATURE, monitor);
+    try {
+      if (request != null)  {
+        IProject project = request.getProject();
+        if(!project.hasNature(NATURE_ID) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
+          addNature(project, NATURE_ID, monitor);
+        }
+      }
+    } catch(Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -58,10 +68,16 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
    * configure Classpath : contain of "Maven Dependencies" Librairies Container.
    */
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
-    if(isScalaProject(facade.getProject())) {
-      removeScalaFromMavenContainer(classpath);
-      addDefaultScalaSourceDirs(facade, classpath, monitor);
-      sortContainerScalaJre(facade.getProject(), monitor);
+    if (!isLaunchConfigurationCtx()) {
+      IProject project = facade.getProject();
+      if(isScalaProject(project)) {
+  //      if(!project.hasNature(ID_NATURE)) {
+  //        addNature(project, ID_NATURE, monitor);
+  //      }
+        removeScalaFromMavenContainer(classpath);
+        addDefaultScalaSourceDirs(facade, classpath, monitor);
+        sortContainerScalaJre(project, monitor); //
+      }
     }
   }
 
@@ -191,6 +207,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   /**
    * Check and reorder Containers : "Scala Lib" should be before "JRE Sys",
    * else 'Run Scala Application' set Boot Entries JRE before Scala and failed with scala.* NotFound Exception.
+   * Should already be done when adding nature
+   * @see scala.tools.eclipse.Nature#configure()
    */
   private void sortContainerScalaJre(IProject project, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
@@ -201,10 +219,12 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     for (int i = 0; i < rawClasspath.length; i++) {
       IClasspathEntry e = rawClasspath[i];
       if (IClasspathEntry.CPE_CONTAINER == e.getEntryKind()) {
-        if ("org.eclipse.jdt.launching.JRE_CONTAINER".equals(e.getPath().segment(0))) {
+        // "org.eclipse.jdt.launching.JRE_CONTAINER"
+        if (JavaRuntime.JRE_CONTAINER.equals(e.getPath().segment(0))) {
           posJreContainer = i;
         }
-        if ("ch.epfl.lamp.sdt.launching.SCALA_CONTAINER".equals(e.getPath().segment(0))) {
+        // "ch.epfl.lamp.sdt.launching.SCALA_CONTAINER"
+        if (ScalaPlugin.plugin().scalaLibId().equals(e.getPath().segment(0))) {
           posScalaContainer = i;
         }
       }
@@ -215,12 +235,17 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
       rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
       rawClasspath[posJreContainer]= tmp;
       javaProject.setRawClasspath(rawClasspath, monitor);
+    } else if (posScalaContainer == -1) {
+      System.out.println("no scala container !!!");
+//      rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
+//      rawClasspath[posJreContainer]= tmp;
+//      javaProject.setRawClasspath(rawClasspath, monitor);
     }
   }
 
   static boolean isScalaProject(IProject project) {
     try {
-      return project != null && project.isAccessible() && project.hasNature(ID_NATURE);
+      return project != null && project.isAccessible() && project.hasNature(NATURE_ID);
     } catch(CoreException e) {
       return false;
     }
@@ -234,6 +259,15 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         if(isMavenBundlePluginMojo(plugin) && !plugin.getExecutions().isEmpty()) {
           return true;
         }
+      }
+    }
+    return false;
+  }
+
+  protected boolean isLaunchConfigurationCtx() {
+    for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+      if ("launch".equals(e.getMethodName())) {
+        return true;
       }
     }
     return false;
