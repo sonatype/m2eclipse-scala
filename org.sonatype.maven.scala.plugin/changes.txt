@@ -1,3 +1,7 @@
+0.0.5 (wip)
+-----
+* use assembla as "project host" to be under Scala-IDE umbrella
+
 0.0.4
 -----
 
