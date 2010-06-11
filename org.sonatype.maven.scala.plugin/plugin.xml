@@ -3,11 +3,12 @@
 <plugin>
    <extension
          point="org.maven.ide.eclipse.projectConfigurators">
+         <!-- priority="98" generic="false" -->
       <configurator
             class="org.maven.ide.eclipse.scala.ScalaProjectConfigurator"
-            id="org.maven.ide.eclipse.ajdt"
-            name="AJDT"
-            priority="101">
+            id="org.maven.ide.eclipse.scala"
+            name="scala"
+            >
       </configurator>
    </extension>
    <extension point="org.maven.ide.eclipse.archetypeCatalogs">
