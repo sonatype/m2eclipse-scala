@@ -1,0 +1,28 @@
+0.0.4
+-----
+
+* include a workaround to run JUnit test, but right-click on JUnit test doesn't propose 'Run as unit test'. Tu run as junit :
+  * select source file and use keybord shortcut (Alt+Shit+X T)
+    * source file have to be named with test class name and being in the 'right' directory (like in java)
+    * I only test with annotation (see source of samples projects listed on wiki)
+  * create JUnit Launch configuration
+
+0.0.3
+-----
+
+* try to fix a issue (NPE) if default folders doesn't exist
+
+0.0.2
+-----
+
+* auto add "src/main/scala" and "src/test/scala" if you don't use goal "add-sources" (nor <sourceDirectory>)
+* add samples project http://github.com/davidB/m2e-scala/tree/master/samples/
+* put documentation at https://www.assembla.com/wiki/show/scala-ide/With_M2Eclipse
+
+0.0.1
+-----
+
+* I fork the m2e-scala project from sonatype and add the following feature
+* remove of scala-library, scala-compiler, scala-dbc, scala-swing from "Maven Dependencies" Container (under eclipse only)
+* re-order JRE Container and Scala Container (to avoid scala.ScalaObject NotFound and C° when use "Run As Scala Application")
+* add Scala-tools.org catalog
