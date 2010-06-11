@@ -15,7 +15,7 @@
   </parent>
   <artifactId>org.maven.ide.eclipse.scala</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
