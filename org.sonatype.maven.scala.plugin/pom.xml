@@ -13,8 +13,9 @@
     <artifactId>scala</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>org.maven.ide.eclipse.ajdt</artifactId>
+  <artifactId>org.maven.ide.eclipse.scala</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <version>0.0.4</version>
   <build>
     <plugins>
       <plugin>
