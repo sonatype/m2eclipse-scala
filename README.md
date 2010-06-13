@@ -29,10 +29,10 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 #### 0.0.5 (wip)
 
 * use assembla as "project host" to be under Scala-IDE umbrella
-* re-do tycho configuration to build
+* re-do tycho configuration (to build on any box)
 * rename directory
 * replace Sonatype as Vendor by Alchim31
-* provide an update-site (build via tycho) at http://alchim31.net/m2e-scala/update-site
+* generate update-site via tycho
 
 #### 0.0.4
 
