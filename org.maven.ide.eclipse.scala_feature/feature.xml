@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.maven.ide.eclipse.scala_feature"
+      label="Maven Integration for Scala IDE"
+      version="0.0.5"
+      provider-name="Alchim31">
+
+   <description url="github.com/davidB/m2e-scala/">
+      Ease m2eclipse + scala-ide (eclipse plugin) integration
+   </description>
+
+   <url>
+      <update label="m2e-scala" url="http://alchim31.net/m2e-scala/update-site"/>
+   </url>
+
+   <plugin
+         id="org.maven.ide.eclipse.scala"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
