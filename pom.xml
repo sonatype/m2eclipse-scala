@@ -1,77 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.sonatype.maven.scala</groupId>
-  <artifactId>scala</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Idiom</name>
+  <groupId>org.maven.ide.eclipse.scala</groupId>
+  <artifactId>m2eclipse-scala</artifactId>
+  <version>0.0.1</version>
   <packaging>pom</packaging>
-  <modules>
-    <module>org.sonatype.maven.scala.plugin</module>
-    <module>org.sonatype.maven.scala.feature</module>
-  </modules>
-  
+
   <properties>
-    <tychoVersion>0.8.0</tychoVersion>
+    <tycho.version>0.8.0</tycho.version>
+    <encoding>UTF-8</encoding>
   </properties>
-  
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
+  <modules>
+    <module>org.maven.ide.eclipse.scala</module>
+    <module>org.maven.ide.eclipse.scala_feature</module>
+    <module>org.maven.ide.eclipse.scala_site</module>
+  </modules>
+
   <build>
+    <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.4.3</version>
+      </plugin>
+    </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
-        <version>${tychoVersion}</version>
+        <version>${tycho.version}</version>
         <extensions>true</extensions>
-      </plugin>    
+      </plugin>
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
-        <version>${tychoVersion}</version>
         <configuration>
           <resolver>p2</resolver>
-          <environments>
-            <environment>
-              <os>linux</os>
-              <ws>gtk</ws>
-              <arch>x86_64</arch>
-            </environment>
-            <environment>
-              <os>win32</os>
-              <ws>win32</ws>
-              <arch>x86</arch>
-            </environment>
-            <environment>
-              <os>macosx</os>
-              <ws>cocoa</ws>
-              <arch>x86</arch>
-            </environment>
-          </environments>
         </configuration>
-      </plugin>     
-    </plugins>      
+      </plugin>
+    </plugins>
   </build>
-  
   <repositories>
     <repository>
-      <id>galileo</id>
-      <url>http://download.eclipse.org/releases/galileo</url>
+      <id>m2eclipse</id>
       <layout>p2</layout>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+      <url>http://m2eclipse.sonatype.org/sites/m2e/</url>
+    </repository>
+    <repository>
+      <id>scala-ide</id>
+      <layout>p2</layout>
+      <url>http://download.scala-ide.org/update-current/</url>
     </repository>
   </repositories>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>tycho</id>
-      <url>http://repository.sonatype.org/content/repositories/all-001//</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository> 
-  </pluginRepositories>
+
+  <profiles>
+    <profile>
+      <id>galileo</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>galileo</id>
+          <url>http://download.eclipse.org/releases/galileo/</url>
+          <layout>p2</layout>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>helios</id>
+      <repositories>
+        <repository>
+          <id>helios</id>
+          <url>http://download.eclipse.org/releases/helios/</url>
+          <layout>p2</layout>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 </project>
