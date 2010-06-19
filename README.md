@@ -9,9 +9,8 @@ m2eclipse-scala
 
 ### Install
 1. install [m2eclipse]
-2. install [m2eclipse-scala] from davidB, by [dowloading](http://github.com/sonatype/m2eclipse-scala/downloads) the lastest version of the plugin  into your eclipse/dropins directory
+2. install [m2eclipse-scala], by [dowloading](http://github.com/sonatype/m2eclipse-scala/downloads) the lastest version of the plugin  into your eclipse/dropins directory
 3. Eclipse : `File > import > maven > Existing Maven Project ...`
-
 
 
 ### Working configuration
@@ -26,7 +25,11 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 
 ### Changes
 
-#### 0.0.5 (wip)
+#### 0.1.0
+
+* reintegration to sonatype repository
+
+#### 0.0.5
 
 * use assembla as "project host" to be under Scala-IDE umbrella
 * re-do tycho configuration (to build on any box)
