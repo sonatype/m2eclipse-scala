@@ -2,16 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Maven Integration for Scala IDE
 Bundle-SymbolicName: org.maven.ide.eclipse.scala;singleton:=true
-Bundle-Version: 0.0.5.qualifier
+Bundle-Version: 0.0.5
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle:
+Require-Bundle: 
  org.eclipse.jdt.core,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.maven.ide.eclipse,
+ org.maven.ide.eclipse;bundle-version="0.10.0",
  org.maven.ide.eclipse.maven_embedder,
  org.maven.ide.eclipse.jdt,
  org.eclipse.jdt.launching,
- ch.epfl.lamp.sdt.core
+ ch.epfl.lamp.sdt.core;bundle-version="2.8.0"
 Bundle-Vendor: Sonatype, Inc.
 Export-Package: org.maven.ide.eclipse.scala
