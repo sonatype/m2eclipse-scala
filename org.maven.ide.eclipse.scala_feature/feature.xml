@@ -3,14 +3,14 @@
       id="org.maven.ide.eclipse.scala_feature"
       label="Maven Integration for Scala IDE"
       version="0.0.5"
-      provider-name="Alchim31">
+      provider-name="Sonatype, Inc.">
 
-   <description url="github.com/davidB/m2e-scala/">
+   <description url="github.com/sonatype/m2eclipse-scala/">
       Ease m2eclipse + scala-ide (eclipse plugin) integration
    </description>
 
    <url>
-      <update label="m2e-scala" url="http://alchim31.net/m2e-scala/update-site"/>
+      <update label="m2eclipse-scala" url="http://alchim31.net/m2e-scala/update-site"/>
    </url>
 
    <plugin
