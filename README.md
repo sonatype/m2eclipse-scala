@@ -26,6 +26,11 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 
 ### Changes
 
+#### 0.2.0
+
+* should work with lift-archetype-basic 2.0-scala280-SNAPSHOT (new sample project added)
+* current and futur ids of scala-ide (ch.epfl... and org.scala-ide....)
+
 #### 0.1.0
 
 * reintegration to sonatype repository
