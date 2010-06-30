@@ -2,7 +2,7 @@
 <feature
       id="org.maven.ide.eclipse.scala_feature"
       label="Maven Integration for Scala IDE"
-      version="0.1.0"
+      version="0.2.0"
       provider-name="Sonatype, Inc.">
 
    <description url="github.com/sonatype/m2eclipse-scala/">
