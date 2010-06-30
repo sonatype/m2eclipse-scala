@@ -29,10 +29,6 @@ import org.maven.ide.eclipse.project.IMavenProjectFacade;
 import org.maven.ide.eclipse.project.configurator.AbstractProjectConfigurator;
 import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 
-import scala.tools.eclipse.ScalaPlugin;
-
-//import scala.tools.eclipse.ScalaLibraryPluginDependencyUtils;
-
 //TODO check the jre/java version compliance (>= 1.5)
 //TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
 //TODO check that pom.xml and ScalaLib Container declare the same scala version
@@ -44,19 +40,39 @@ import scala.tools.eclipse.ScalaPlugin;
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
-  public static String NATURE_ID = ScalaPlugin.plugin().natureId();//"ch.epfl.lamp.sdt.core.scalanature";
-  public static String MOJO_GROUP_ID = "org.scala-tools";
-  public static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
+  /////////////////////////////////////////////////////////////////////////////
+  // STATIC
+  /////////////////////////////////////////////////////////////////////////////
 
-  //public static String SCALA_PLUGIN_ID_BUILDER = "ch.epfl.lamp.sdt.core.scalabuilder";
+  private static String MOJO_GROUP_ID = "org.scala-tools";
+  private static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
+
+  /////////////////////////////////////////////////////////////////////////////
+  // INSTANCE
+  /////////////////////////////////////////////////////////////////////////////
+
+  private String scalaNatureId() {
+    ScalaPluginIds ids = Activator.getInstance().scalaPluginIds();
+    return (ids == null)?null : ids.natureId;
+  }
+
+  private String scalaLibId() {
+    ScalaPluginIds ids = Activator.getInstance().scalaPluginIds();
+    return (ids == null)?null : ids.containerLibId;
+  }
 
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
+    String scalaNature = scalaNatureId();
+    if (scalaNature != null) {
+      //TODO show an alert to user that he should to install scala-ide plugin;
+      return;
+    }
     try {
       if (request != null)  {
         IProject project = request.getProject();
-        if(!project.hasNature(NATURE_ID) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
-          addNature(project, NATURE_ID, monitor);
+        if(!project.hasNature(scalaNature) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
+          addNature(project, scalaNature, monitor);
         }
       }
     } catch(Exception e) {
@@ -68,6 +84,11 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
    * configure Classpath : contain of "Maven Dependencies" Librairies Container.
    */
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
+    String scalaNature = scalaNatureId();
+    if (scalaNature != null) {
+      //TODO show an alert to user that he should to install scala-ide plugin;
+      return;
+    }
     if (!isLaunchConfigurationCtx()) {
       IProject project = facade.getProject();
       if(isScalaProject(project)) {
@@ -156,7 +177,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         //TODO, use content of Scala Library Container instead of hardcoded value
         back = back && (
             "scala-library".equals(descriptor.getArtifactId())
-            || "scala-compiler".equals(descriptor.getArtifactId())
+            //|| "scala-compiler".equals(descriptor.getArtifactId())
             || "scala-dbc".equals(descriptor.getArtifactId())
             || "scala-swing".equals(descriptor.getArtifactId())
         );
@@ -223,8 +244,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         if (JavaRuntime.JRE_CONTAINER.equals(e.getPath().segment(0))) {
           posJreContainer = i;
         }
-        // "ch.epfl.lamp.sdt.launching.SCALA_CONTAINER"
-        if (ScalaPlugin.plugin().scalaLibId().equals(e.getPath().segment(0))) {
+        // ""
+        if (scalaLibId().equals(e.getPath().segment(0))) {
           posScalaContainer = i;
         }
       }
@@ -243,9 +264,9 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
   }
 
-  static boolean isScalaProject(IProject project) {
+  private boolean isScalaProject(IProject project) {
     try {
-      return project != null && project.isAccessible() && project.hasNature(NATURE_ID);
+      return project != null && project.isAccessible() && project.hasNature(scalaNatureId());
     } catch(CoreException e) {
       return false;
     }
