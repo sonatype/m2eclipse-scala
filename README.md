@@ -23,8 +23,14 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 * [Scala and Java cyclic dependency](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-scala-cycle-java/) (configuration longer than mono direction scala -> java or java -> scala to compile under maven)
 * [Java main code and Scala for test](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-java-test-in-scala/)
 * [Custom Layout](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-custom-layout/) java + scala cyclic dependencies, java+scala under the same source folder `src` and `test` (for test source folder).
+* [Lift based project](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-liftbased/) created from a shell created + imported project (used lift-archetype-basic 2.0-scala280-SNAPSHOT)
 
 ### Changes
+
+#### 0.2.0
+
+* should work with lift-archetype-basic 2.0-scala280-SNAPSHOT (new sample project added)
+* support current and futur ids of scala-ide, select from the installed plugin (ch.epfl... and org.scala-ide....)
 
 #### 0.1.0
 
