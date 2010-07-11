@@ -27,6 +27,10 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 
 ### Changes
 
+#### 0.2.1
+
+* fix critical bug about detection/activation of scala (plugin, nature) => 0.2.0 useless
+
 #### 0.2.0
 
 * should work with lift-archetype-basic 2.0-scala280-SNAPSHOT (new sample project added)
