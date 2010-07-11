@@ -64,7 +64,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
     String scalaNature = scalaNatureId();
-    if (scalaNature != null) {
+    if (scalaNature == null) {
       //TODO show an alert to user that he should to install scala-ide plugin;
       return;
     }
@@ -85,7 +85,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
    */
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
     String scalaNature = scalaNatureId();
-    if (scalaNature != null) {
+    if (scalaNature == null) {
       //TODO show an alert to user that he should to install scala-ide plugin;
       return;
     }
