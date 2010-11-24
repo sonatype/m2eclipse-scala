@@ -1,12 +1,11 @@
 package samples
 
+import junit.framework.TestCase
 import org.junit._
 import Assert._
 
-@Test
-class AppTest {
+class JUnitExtendSampleTest extends TestCase {
 
-    @Test
     def testOK() = assertTrue(true)
 
 //    @Test
