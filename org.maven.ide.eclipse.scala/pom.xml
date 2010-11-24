@@ -5,10 +5,9 @@
   <parent>
     <groupId>org.maven.ide.eclipse.scala</groupId>
     <artifactId>m2eclipse-scala</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.2</version>
   </parent>
   <artifactId>org.maven.ide.eclipse.scala</artifactId>
-  <version>0.2.1</version>
   <packaging>eclipse-plugin</packaging>
 
   <properties>
@@ -17,4 +16,7 @@
     <encoding>UTF-8</encoding>
   </properties>
 
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+  </build>
 </project>
