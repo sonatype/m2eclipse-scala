@@ -35,8 +35,8 @@ import org.maven.ide.eclipse.project.configurator.ProjectConfigurationRequest;
 //TODO keep sync scala-compiler configuration between pom.xml and scala-plugin ? (sync bi-direction) ?
 //TODO ask sonatype/mailing-list about how to retreive maven plugin configuration, like additional sourceDirectory
 /**
- * @author Sonatype Inc (http://github.com/sonatype/m2e-scala)
- * @author davidB (http://github.com/davidB/m2e-scala)
+ * @author Sonatype Inc (http://github.com/sonatype/m2eclipse-scala)
+ * @author davidB (http://github.com/davidB)
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
