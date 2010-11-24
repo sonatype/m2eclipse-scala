@@ -18,6 +18,9 @@ samples/*/.settings
 samples/*/.classpath
 samples/*/.project
 samples/*/.scala_dependencies
+samples/*/project/boot
+samples/*/lib_managed
+samples/**/*.db
 
 # building
 target
