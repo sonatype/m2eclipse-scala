@@ -27,6 +27,14 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 
 ### Changes
 
+#### 0.2.3
+
+* change urls of scala-tools.org catalags
+
+#### 0.2.2
+
+* rebuild to work with m2eclipse 0.12
+
 #### 0.2.1
 
 * fix critical bug about detection/activation of scala (plugin, nature) => 0.2.0 useless
