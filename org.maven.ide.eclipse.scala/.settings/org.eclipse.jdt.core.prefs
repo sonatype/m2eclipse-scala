@@ -1,4 +1,4 @@
-#Sat Jun 19 16:29:55 CEST 2010
+#Wed Nov 24 10:29:41 CET 2010
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -16,6 +16,8 @@ org.eclipse.jdt.core.codeComplete.localPrefixes=
 org.eclipse.jdt.core.codeComplete.localSuffixes=
 org.eclipse.jdt.core.codeComplete.staticFieldPrefixes=
 org.eclipse.jdt.core.codeComplete.staticFieldSuffixes=
+org.eclipse.jdt.core.codeComplete.staticFinalFieldPrefixes=
+org.eclipse.jdt.core.codeComplete.staticFinalFieldSuffixes=
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
 org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
