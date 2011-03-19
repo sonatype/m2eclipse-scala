@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.maven.ide.eclipse.projectConfigurators">
+         point="org.eclipse.m2e.core.projectConfigurators">
          <!-- priority="98" generic="false" -->
       <configurator
             class="org.maven.ide.eclipse.scala.ScalaProjectConfigurator"
@@ -11,7 +11,12 @@
             >
       </configurator>
    </extension>
-   <extension point="org.maven.ide.eclipse.archetypeCatalogs">
+   <!-- marker extension point, mappings read from ./lifecycle-mapping-metadata.xml file -->
+   <extension
+         point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
+   </extension>   
+   
+   <extension point="org.eclipse.m2e.core.archetypeCatalogs">
       <remote description="Scala-tools.org/releases Catalog" url="http://nexus.scala-tools.org/content/repositories/releases/"/>
       <remote description="Scala-tools.org/snapshots Catalog" url="http://nexus.scala-tools.org/content/repositories/snapshots/"/>
    </extension>

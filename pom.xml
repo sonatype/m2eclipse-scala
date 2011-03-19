@@ -53,7 +53,7 @@
     <repository>
       <id>m2eclipse</id>
       <layout>p2</layout>
-      <url>http://m2eclipse.sonatype.org/sites/m2e/</url>
+      <url>https://repository.sonatype.org/content/sites/forge-sites/m2e/0.13.0/N/0.13.0.201101251704/</url>
     </repository>
     <repository>
       <id>scala-ide</id>

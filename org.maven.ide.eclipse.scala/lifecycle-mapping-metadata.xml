@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lifecycleMappingMetadata>
+
+  <pluginExecutions>
+    <!--  scala maven plugins -->
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <goals>
+          <goal>compile</goal>
+          <goal>testCompile</goal>
+        </goals>
+        <versionRange>[2.0,)</versionRange> <!-- mkleint: not entirely sure if there is a limit, so shot for a wide range -->
+      </pluginExecutionFilter>
+      <action>
+          <configurator>
+            <id>org.maven.ide.eclipse.scala</id>
+          </configurator>
+      </action>
+    </pluginExecution>
+  </pluginExecutions>
+</lifecycleMappingMetadata>
