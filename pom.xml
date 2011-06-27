@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <tycho.version>0.10.0</tycho.version>
+    <tycho.version>0.11.1</tycho.version>
     <encoding>UTF-8</encoding>
   </properties>
 
@@ -53,31 +53,21 @@
     <repository>
       <id>m2eclipse</id>
       <layout>p2</layout>
-      <url>https://repository.sonatype.org/content/sites/forge-sites/m2e/0.13.0/N/0.13.0.201101251704/</url>
+      <url>http://download.eclipse.org/technology/m2e/milestones/1.0</url>
     </repository>
     <repository>
       <id>scala-ide</id>
       <layout>p2</layout>
-      <url>http://download.scala-ide.org/update-current/</url>
+      <url>http://download.scala-ide.org/update-1.0.0-milestones-2.8.1.final</url>
     </repository>
   </repositories>
 
   <profiles>
     <profile>
-      <id>galileo</id>
+      <id>helios</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <repositories>
-        <repository>
-          <id>galileo</id>
-          <url>http://download.eclipse.org/releases/galileo/</url>
-          <layout>p2</layout>
-        </repository>
-      </repositories>
-    </profile>
-    <profile>
-      <id>helios</id>
       <repositories>
         <repository>
           <id>helios</id>
