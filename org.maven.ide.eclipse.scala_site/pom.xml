@@ -5,10 +5,42 @@
   <parent>
     <groupId>org.maven.ide.eclipse.scala</groupId>
     <artifactId>m2eclipse-scala</artifactId>
-    <version>0.2.3</version>
+    <version>0.3.0</version>
   </parent>
 
   <artifactId>org.maven.ide.eclipse.scala_site</artifactId>
   <packaging>eclipse-update-site</packaging>
   <name>Maven Integration for Scala IDE</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <move todir="${project.build.directory}/m2eclipse-scala">
+                  <fileset dir="${project.build.directory}/site"/>
+                </move>
+                <copy todir="${project.build.directory}/site">
+                  <fileset dir="${basedir}/root-site"/>
+                </copy>
+                <move todir="${project.build.directory}/site/m2eclipse-scala">
+                  <fileset dir="${project.build.directory}/m2eclipse-scala"/>
+                </move>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
