@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <tycho.version>0.11.1</tycho.version>
+    <tycho.version>0.12.0</tycho.version>
     <encoding>UTF-8</encoding>
   </properties>
 
@@ -34,13 +34,13 @@
     </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.tycho</groupId>
+        <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
         <version>${tycho.version}</version>
         <extensions>true</extensions>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.tycho</groupId>
+        <groupId>org.eclipse.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho.version}</version>
         <configuration>
