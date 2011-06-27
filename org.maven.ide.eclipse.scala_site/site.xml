@@ -3,5 +3,5 @@
    <description name="Maven Integration for Scala IDE">
       Maven Integration for Scala IDE
    </description>
-   <feature url="features/org.maven.ide.eclipse.scala_feature_0.2.3.jar" id="org.maven.ide.eclipse.scala_feature" version="0.0.0"/>
+   <feature url="features/org.maven.ide.eclipse.scala_feature_0.3.0.jar" id="org.maven.ide.eclipse.scala_feature" version="0.0.0"/>
 </site>

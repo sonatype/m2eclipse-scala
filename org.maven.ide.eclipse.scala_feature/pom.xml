@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.maven.ide.eclipse.scala</groupId>
     <artifactId>m2eclipse-scala</artifactId>
-    <version>0.2.3</version>
+    <version>0.3.0</version>
   </parent>
 
   <artifactId>org.maven.ide.eclipse.scala_feature</artifactId>
