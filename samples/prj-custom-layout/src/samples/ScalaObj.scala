@@ -1,5 +1,5 @@
 package samples
 
 class ScalaObj {
-  def foo() = 280
+  def foo() = "foo-280"
 }
