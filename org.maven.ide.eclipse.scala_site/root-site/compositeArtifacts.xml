@@ -8,6 +8,6 @@
   </properties>
   <children size="2">
     <child location="m2eclipse-scala"/>
-    <child location="http://download.eclipse.org/technology/m2e/milestones/1.0"/>
+    <child location="http://download.eclipse.org/technology/m2e/releases"/>
   </children>
 </repository>
