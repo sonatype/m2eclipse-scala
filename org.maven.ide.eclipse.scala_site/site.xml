@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description name="Maven Integration for Scala IDE">
-      Maven Integration for Scala IDE
+   <description name="m2e - Maven Integration for Scala IDE">
+      m2e - Maven Integration for Scala IDE
    </description>
-   <feature url="features/org.maven.ide.eclipse.scala_feature_0.3.0.jar" id="org.maven.ide.eclipse.scala_feature" version="0.0.0"/>
+   <feature url="features/org.maven.ide.eclipse.scala_feature_0.0.0.jar" id="org.maven.ide.eclipse.scala_feature" version="0.0.0">
+     <category name="m2e"/>
+   </feature>
+   <category-def name="m2e" label="Maven Integration for Eclipse"/>
 </site>
