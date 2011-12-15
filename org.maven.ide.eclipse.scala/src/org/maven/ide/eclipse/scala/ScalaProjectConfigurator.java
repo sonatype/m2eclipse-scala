@@ -25,6 +25,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.m2e.jdt.IClasspathDescriptor;
 import org.eclipse.m2e.jdt.IClasspathEntryDescriptor;
 import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
+import org.eclipse.m2e.jdt.internal.MavenClasspathHelpers;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
@@ -237,6 +238,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
     int posScalaContainer = -1;
     int posJreContainer = -1;
+    int posMavenContainer = -1;
+    
     for (int i = 0; i < rawClasspath.length; i++) {
       IClasspathEntry e = rawClasspath[i];
       if (IClasspathEntry.CPE_CONTAINER == e.getEntryKind()) {
@@ -244,19 +247,31 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         if (JavaRuntime.JRE_CONTAINER.equals(e.getPath().segment(0))) {
           posJreContainer = i;
         }
-        // ""
         if (scalaLibId().equals(e.getPath().segment(0))) {
           posScalaContainer = i;
         }
+        if (e.equals(MavenClasspathHelpers.getDefaultContainerEntry()))
+          posMavenContainer = i;
       }
     }
+
+    if (posMavenContainer != -1 && posJreContainer != -1 && posJreContainer > posMavenContainer) {
+      // swap position to have jre before maven
+      IClasspathEntry tmp = rawClasspath[posMavenContainer];
+      rawClasspath[posMavenContainer] = rawClasspath[posJreContainer];
+      rawClasspath[posJreContainer]= tmp;
+      javaProject.setRawClasspath(rawClasspath, monitor);
+    }
+
     if (posScalaContainer != -1 && posJreContainer != -1 && posScalaContainer > posJreContainer) {
       // swap position to have scalaContainer first
       IClasspathEntry tmp = rawClasspath[posScalaContainer];
       rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
       rawClasspath[posJreContainer]= tmp;
       javaProject.setRawClasspath(rawClasspath, monitor);
-    } else if (posScalaContainer == -1) {
+    }
+    
+    if (posScalaContainer == -1) {
       System.out.println("no scala container !!!");
 //      rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
 //      rawClasspath[posJreContainer]= tmp;
