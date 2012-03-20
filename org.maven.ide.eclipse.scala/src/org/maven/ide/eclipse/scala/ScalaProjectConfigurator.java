@@ -43,6 +43,7 @@ import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
 /**
  * @author Sonatype Inc (http://github.com/sonatype/m2eclipse-scala)
  * @author davidB (http://github.com/davidB)
+ * @author germanklf  (http://github.com/germanklf)
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
