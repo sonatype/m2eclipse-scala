@@ -292,50 +292,6 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
     Collections.sort(entries, comparator);
     javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), monitor);
-
-    /*
-    int posScalaContainer = -1;
-    int posJreContainer = -1;
-    int posMavenContainer = -1;
-
-    for(int i = 0; i < rawClasspath.length; i++ ) {
-      IClasspathEntry e = rawClasspath[i];
-      if(IClasspathEntry.CPE_CONTAINER == e.getEntryKind()) {
-        // "org.eclipse.jdt.launching.JRE_CONTAINER"
-        if(JavaRuntime.JRE_CONTAINER.equals(e.getPath().segment(0))) {
-          posJreContainer = i;
-        }
-        if(scalaLibId().equals(e.getPath().segment(0))) {
-          posScalaContainer = i;
-        }
-        if(e.equals(MavenClasspathHelpers.getDefaultContainerEntry()))
-          posMavenContainer = i;
-      }
-    }
-
-    if(posMavenContainer != -1 && posJreContainer != -1 && posJreContainer > posMavenContainer) {
-      // swap position to have jre before maven
-      IClasspathEntry tmp = rawClasspath[posMavenContainer];
-      rawClasspath[posMavenContainer] = rawClasspath[posJreContainer];
-      rawClasspath[posJreContainer] = tmp;
-      javaProject.setRawClasspath(rawClasspath, monitor);
-    }
-
-    if(posScalaContainer != -1 && posJreContainer != -1 && posScalaContainer > posJreContainer) {
-      // swap position to have scalaContainer first
-      IClasspathEntry tmp = rawClasspath[posScalaContainer];
-      rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
-      rawClasspath[posJreContainer] = tmp;
-      javaProject.setRawClasspath(rawClasspath, monitor);
-    }
-
-    if(posScalaContainer == -1) {
-      System.out.println("no scala container !!!");
-    //      rawClasspath[posScalaContainer] = rawClasspath[posJreContainer];
-    //      rawClasspath[posJreContainer]= tmp;
-    //      javaProject.setRawClasspath(rawClasspath, monitor);
-    }
-    */
   }
 
   private boolean isScalaProject(IProject project) {
