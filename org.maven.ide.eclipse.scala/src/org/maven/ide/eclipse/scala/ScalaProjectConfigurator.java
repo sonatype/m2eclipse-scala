@@ -44,8 +44,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   // STATIC
   /////////////////////////////////////////////////////////////////////////////
 
-  private static String MOJO_GROUP_ID = "org.scala-tools";
-  private static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
+  private static String MOJO_GROUP_ID = "net.alchim31.maven";
+  private static String MOJO_ARTIFACT_ID = "scala-maven-plugin";
 
   /////////////////////////////////////////////////////////////////////////////
   // INSTANCE
@@ -103,7 +103,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   }
 
   /**
-   * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
+   * To work as scala-maven-plugin, src/main/scala and src/test/scala are added if directory exists
    *
    * @param facade
    * @throws CoreException
@@ -187,7 +187,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   }
 
 //  /**
-//   * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
+//   * To work as scala-maven-plugin, src/main/scala and src/test/scala are added if directory exists
 //   *
 //   * @param facade
 //   * @throws CoreException

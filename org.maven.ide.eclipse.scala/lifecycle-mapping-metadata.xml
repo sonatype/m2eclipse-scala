@@ -5,13 +5,13 @@
     <!--  scala maven plugins -->
     <pluginExecution>
       <pluginExecutionFilter>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
         <goals>
           <goal>compile</goal>
           <goal>testCompile</goal>
         </goals>
-        <versionRange>[2.0,)</versionRange> <!-- mkleint: not entirely sure if there is a limit, so shot for a wide range -->
+        <versionRange>[3.0,)</versionRange> <!-- mkleint: not entirely sure if there is a limit, so shot for a wide range -->
       </pluginExecutionFilter>
       <action>
         <configurator>
@@ -21,8 +21,8 @@
     </pluginExecution>
     <pluginExecution>
       <pluginExecutionFilter>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
         <goals>
           <goal>add-source</goal>
           <goal>doc</goal>
@@ -30,7 +30,7 @@
           <goal>run</goal>
           <goal>script</goal>
         </goals>
-        <versionRange>[2.0,)</versionRange>
+        <versionRange>[3.0,)</versionRange>
       </pluginExecutionFilter>
       <action>
         <execute />
@@ -38,15 +38,15 @@
     </pluginExecution>
     <pluginExecution>
       <pluginExecutionFilter>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
         <goals>
           <goal>console</goal>
           <goal>cc</goal>
           <goal>cctest</goal>
           <goal>help</goal>
         </goals>
-        <versionRange>[2.0,)</versionRange>
+        <versionRange>[3.0,)</versionRange>
       </pluginExecutionFilter>
       <action>
         <ignore />

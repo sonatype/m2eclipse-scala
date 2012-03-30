@@ -84,7 +84,7 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 * add Scala-tools.org catalog
 
 
-   [maven-scala-plugin]: http://scala-tools.org/mvnsites/maven-scala-plugin/
+   [scala-maven-plugin]: http://davidb.github.com/scala-maven-plugin/
    [maven-eclipse-plugin]: http://maven.apache.org/plugins/maven-eclipse-plugin
    [build-helper-maven-plugin]: http://mojo.codehaus.org/build-helper-maven-plugin/
    [m2eclipse]: http://m2eclipse.sonatype.org/

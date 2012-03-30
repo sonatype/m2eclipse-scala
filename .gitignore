@@ -44,6 +44,6 @@ TestJavaClass*.java
 #SHITTY output not in target directory
 build.log
 
-/maven-scala-plugin.iml
-/maven-scala-plugin.ipr
-/maven-scala-plugin.iws
+/scala-maven-plugin.iml
+/scala-maven-plugin.ipr
+/scala-maven-plugin.iws
