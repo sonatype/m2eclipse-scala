@@ -52,7 +52,6 @@
         <ignore />
       </action>
     </pluginExecution>
-  </pluginExecutions>
     <!--  maven-scala-plugin -->
     <pluginExecution>
       <pluginExecutionFilter>
