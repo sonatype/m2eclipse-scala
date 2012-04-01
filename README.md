@@ -3,15 +3,9 @@ m2eclipse-scala
 
 [m2eclipse-scala] is a work in progress to ease integration between [m2eclipse] and [scala-ide for eclipse].
 
-* issue tracker : [m2eclipse-scala at assembla](http://scala-ide.assembla.com/spaces/m2e-scala/tickets)
+* issue tracker : [m2eclipse-scala at github](https://github.com/sonatype/m2eclipse-scala/issues)
 * mailing-list : [scala-ide-user](http://groups.google.fr/group/scala-ide-user)
-* update-site : not available (use dropins directory see below for install)
-
-### Install
-
-1. install [m2eclipse]
-2. install [m2eclipse-scala], by [dowloading](http://github.com/sonatype/m2eclipse-scala/downloads) the lastest version of the plugin  into your eclipse/dropins directory
-3. Eclipse : `File > import > maven > Existing Maven Project ...`
+* update-site : [http://alchim31.net/m2e-scala/update-site](http://alchim31.net/m2e-scala/update-site)
 
 
 ### Working configuration
@@ -26,6 +20,21 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 * [Lift based project](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-liftbased/) created from a shell created + imported project (used lift-archetype-basic 2.0-scala280-SNAPSHOT)
 
 ### Changes
+
+#### 0.4.0
+
+* remove scala-tools.org from catalags
+* add support for [scala-maven-plugin]
+* sort classpath and entries of the project
+
+#### 0.3.1
+
+* support of m2eclipse 1.0.0
+* upate update-site to propose install of m2eclipse
+
+#### 0.3.0
+
+* support of m2eclipse 0.13.0
 
 #### 0.2.3
 
@@ -83,7 +92,7 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 * re-order JRE Container and Scala Container (to avoid scala.ScalaObject NotFound and C° when use "Run As Scala Application")
 * add Scala-tools.org catalog
 
-
+   [scala-maven-plugin]: http://davidb.github.com/scala-maven-plugin/
    [maven-scala-plugin]: http://scala-tools.org/mvnsites/maven-scala-plugin/
    [maven-eclipse-plugin]: http://maven.apache.org/plugins/maven-eclipse-plugin
    [build-helper-maven-plugin]: http://mojo.codehaus.org/build-helper-maven-plugin/

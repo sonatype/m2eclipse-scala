@@ -4,7 +4,7 @@
   <properties size="2">
     <property name="p2.compressed" value="true"/>
     <!-- get new time w/ `date +%s000` -->
-    <property name="p2.timestamp" value="1309209627000"/>
+    <property name="p2.timestamp" value="1333273554000"/>
   </properties>
   <children size="2">
     <child location="m2eclipse-scala"/>
