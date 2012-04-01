@@ -15,9 +15,4 @@
    <extension
          point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
    </extension>   
-   
-   <extension point="org.eclipse.m2e.core.archetypeCatalogs">
-      <remote description="Scala-tools.org/releases Catalog" url="http://nexus.scala-tools.org/content/repositories/releases/"/>
-      <remote description="Scala-tools.org/snapshots Catalog" url="http://nexus.scala-tools.org/content/repositories/snapshots/"/>
-   </extension>
 </plugin>
