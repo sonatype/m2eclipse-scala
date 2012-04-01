@@ -5,7 +5,7 @@ m2eclipse-scala
 
 * issue tracker : [m2eclipse-scala at github](https://github.com/sonatype/m2eclipse-scala/issues)
 * mailing-list : [scala-ide-user](http://groups.google.fr/group/scala-ide-user)
-* update-site : [http://alchim31.net/m2e-scala/update-site](http://alchim31.net/m2e-scala/update-site)
+* update-site : [http://alchim31.free.fr/m2e-scala/update-site](http://alchim31.free.fr/m2e-scala/update-site)
 
 
 ### Working configuration
