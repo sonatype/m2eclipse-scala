@@ -22,28 +22,6 @@
     <vscaladoc.links.liftweb.baseurl>http://scala-tools.org/mvnsites-snapshots/liftweb</vscaladoc.links.liftweb.baseurl>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>scala-tools.releases</id>
-      <name>Scala-Tools Dependencies Repository for Releases</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-    <repository>
-      <id>scala-tools.snapshots</id>
-      <name>Scala-Tools Dependencies Repository for Snapshots</name>
-      <url>http://scala-tools.org/repo-snapshots</url>
-      <snapshots/>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>scala-tools.releases</id>
-      <name>Scala-Tools Plugins Repository for Releases</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <dependencies>
     <dependency>
       <groupId>net.liftweb</groupId>
@@ -94,9 +72,9 @@
     <testSourceDirectory>src/test/scala</testSourceDirectory>
     <plugins>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>2.13.1</version>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>3.0.1</version>
         <configuration>
           <charset>${project.build.sourceEncoding}</charset>
           <jvmArgs>
@@ -174,20 +152,4 @@
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
-        <version>2.13.1</version>
-        <configuration>
-          <charset>${project.build.sourceEncoding}</charset>
-          <jvmArgs>
-            <jvmArg>-Xmx1024m</jvmArg>
-            <jvmArg>-DpackageLinkDefs=file://${project.build.directory}/packageLinkDefs.properties</jvmArg>
-          </jvmArgs>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

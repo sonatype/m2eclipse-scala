@@ -2,7 +2,58 @@
 <lifecycleMappingMetadata>
 
   <pluginExecutions>
-    <!--  scala maven plugins -->
+    <!--  scala-maven-plugin -->
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <goals>
+          <goal>compile</goal>
+          <goal>testCompile</goal>
+        </goals>
+        <versionRange>[3.0,)</versionRange>
+      </pluginExecutionFilter>
+      <action>
+        <configurator>
+          <id>org.maven.ide.eclipse.scala</id>
+        </configurator>
+      </action>
+    </pluginExecution>
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <goals>
+          <goal>add-source</goal>
+          <goal>doc</goal>
+          <goal>genjson</goal>
+          <goal>run</goal>
+          <goal>script</goal>
+        </goals>
+        <versionRange>[3.0,)</versionRange>
+      </pluginExecutionFilter>
+      <action>
+        <execute />
+      </action>
+    </pluginExecution>
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <goals>
+          <goal>console</goal>
+          <goal>cc</goal>
+          <goal>cctest</goal>
+          <goal>help</goal>
+        </goals>
+        <versionRange>[3.0,)</versionRange>
+      </pluginExecutionFilter>
+      <action>
+        <ignore />
+      </action>
+    </pluginExecution>
+  </pluginExecutions>
+    <!--  maven-scala-plugin -->
     <pluginExecution>
       <pluginExecutionFilter>
         <groupId>org.scala-tools</groupId>

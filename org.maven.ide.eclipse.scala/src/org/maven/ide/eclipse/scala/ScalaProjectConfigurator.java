@@ -34,7 +34,6 @@ import org.eclipse.m2e.jdt.IClasspathDescriptor;
 import org.eclipse.m2e.jdt.IClasspathEntryDescriptor;
 import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
 
-
 //TODO check the jre/java version compliance (>= 1.5)
 //TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
 //TODO check that pom.xml and ScalaLib Container declare the same scala version
@@ -47,13 +46,6 @@ import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
-  /////////////////////////////////////////////////////////////////////////////
-  // STATIC
-  /////////////////////////////////////////////////////////////////////////////
-
-  private static String MOJO_GROUP_ID = "org.scala-tools";
-
-  private static String MOJO_ARTIFACT_ID = "maven-scala-plugin";
 
   private Map<String, Integer> mapSourceTypeWeight;
 
@@ -102,29 +94,25 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     };
   }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // INSTANCE
-  /////////////////////////////////////////////////////////////////////////////
-
   private String scalaNatureId() {
     ScalaPluginIds ids = Activator.getInstance().scalaPluginIds();
-    return (ids == null) ? null : ids.natureId;
+    return (ids == null)?null : ids.natureId;
   }
 
   private String scalaLibId() {
     ScalaPluginIds ids = Activator.getInstance().scalaPluginIds();
-    return (ids == null) ? null : ids.containerLibId;
+    return (ids == null)?null : ids.containerLibId;
   }
 
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
     String scalaNature = scalaNatureId();
-    if(scalaNature == null) {
+    if (scalaNature == null) {
       //TODO show an alert to user that he should to install scala-ide plugin;
       return;
     }
     try {
-      if(request != null) {
+      if (request != null)  {
         IProject project = request.getProject();
         if(!project.hasNature(scalaNature) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
           addNature(project, scalaNature, monitor);
@@ -138,19 +126,18 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   /**
    * configure Classpath : contain of "Maven Dependencies" Librairies Container.
    */
-  public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor)
-      throws CoreException {
+  public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
     String scalaNature = scalaNatureId();
-    if(scalaNature == null) {
+    if (scalaNature == null) {
       //TODO show an alert to user that he should to install scala-ide plugin;
       return;
     }
-    if(!isLaunchConfigurationCtx()) {
+    if (!isLaunchConfigurationCtx()) {
       IProject project = facade.getProject();
       if(isScalaProject(project)) {
-        //      if(!project.hasNature(ID_NATURE)) {
-        //        addNature(project, ID_NATURE, monitor);
-        //      }
+  //      if(!project.hasNature(ID_NATURE)) {
+  //        addNature(project, ID_NATURE, monitor);
+  //      }
         removeScalaFromMavenContainer(classpath);
         addDefaultScalaSourceDirs(facade, classpath, monitor);
         sortContainerScalaJre(project, monitor); //
@@ -160,13 +147,12 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
   /**
    * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
-   * 
+   *
    * @param facade
    * @throws CoreException
    */
   //TODO take a look at http://github.com/sonatype/m2eclipse-extras/blob/master/org.maven.ide.eclipse.temporary.mojos/src/org/maven/ide/eclipse/buildhelper/BuildhelperProjectConfigurator.java
-  private void addDefaultScalaSourceDirs(IMavenProjectFacade facade, IClasspathDescriptor classpath,
-      IProgressMonitor monitor) throws CoreException {
+  private void addDefaultScalaSourceDirs(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
     IProject project = facade.getProject();
     IJavaProject javaProject = JavaCore.create(project);
     IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
@@ -174,18 +160,18 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
     // can't use classpath.addSourceEntry because source entry are append under "Maven Dependencies" container
     IFolder defaultMainSrc = project.getFolder("src/main/scala");
-    if(defaultMainSrc != null && defaultMainSrc.exists()) {
+    if (defaultMainSrc != null && defaultMainSrc.exists()) {
       IPath p = defaultMainSrc.getFullPath();
       rawClasspath = addSourceEntry(rawClasspath, p, facade.getOutputLocation());
     }
 
     IFolder defaultTestSrc = project.getFolder("src/test/scala");
-    if(defaultTestSrc != null && defaultTestSrc.exists()) {
+    if (defaultTestSrc != null && defaultTestSrc.exists()) {
       IPath p = defaultTestSrc.getFullPath();
       rawClasspath = addSourceEntry(rawClasspath, p, facade.getTestOutputLocation());
     }
 
-    if(rawClasspath.length != initSize) {
+    if (rawClasspath.length != initSize) {
       javaProject.setRawClasspath(rawClasspath, monitor);
     }
 
@@ -200,17 +186,18 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         new IPath[0], //
         new IPath[0], //
         outputLocation, //
-        new IClasspathAttribute[0]);
-    if(!contains(rawClasspath, entry)) {
+        new IClasspathAttribute[0]
+    );
+    if (!contains(rawClasspath, entry)) {
       back = add(rawClasspath, entry);
     }
     return back;
   }
 
   private boolean contains(IClasspathEntry[] rawClasspath, IClasspathEntry entry) {
-    if(entry != null && rawClasspath != null) {
+    if (entry != null && rawClasspath != null) {
       for(IClasspathEntry e : rawClasspath) {
-        if(entry.equals(e)) {
+        if (entry.equals(e)) {
           return true;
         }
       }
@@ -231,9 +218,12 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
       public boolean accept(IClasspathEntryDescriptor descriptor) {
         boolean back = "org.scala-lang".equals(descriptor.getGroupId());
         //TODO, use content of Scala Library Container instead of hardcoded value
-        back = back && ("scala-library".equals(descriptor.getArtifactId())
-        //|| "scala-compiler".equals(descriptor.getArtifactId())
-            || "scala-dbc".equals(descriptor.getArtifactId()) || "scala-swing".equals(descriptor.getArtifactId()));
+        back = back && (
+            "scala-library".equals(descriptor.getArtifactId())
+            //|| "scala-compiler".equals(descriptor.getArtifactId())
+            || "scala-dbc".equals(descriptor.getArtifactId())
+            || "scala-swing".equals(descriptor.getArtifactId())
+        );
         return back;
       }
     });
@@ -263,12 +253,12 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 //    }
 //  }
 
+
   /**
-   * Not called with m2eclipse 0.10.0 Configure the eclipse project classpath (similar to eclipse
-   * IJavaProject.getRawClasspath).
+   * Not called with m2eclipse 0.10.0
+   * Configure the eclipse project classpath (similar to eclipse IJavaProject.getRawClasspath).
    */
-  public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath,
-      IProgressMonitor monitor) throws CoreException {
+  public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
 //    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 //    IProject project = request.getProject();
 //    if(isScalaProject(project)) {
@@ -279,9 +269,9 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   }
 
   /**
-   * Check and reorder Containers : "Scala Lib" should be before "JRE Sys", else 'Run Scala Application' set Boot
-   * Entries JRE before Scala and failed with scala.* NotFound Exception. Should already be done when adding nature
-   * 
+   * Check and reorder Containers : "Scala Lib" should be before "JRE Sys",
+   * else 'Run Scala Application' set Boot Entries JRE before Scala and failed with scala.* NotFound Exception.
+   * Should already be done when adding nature
    * @see scala.tools.eclipse.Nature#configure()
    */
   private void sortContainerScalaJre(IProject project, IProgressMonitor monitor) throws CoreException {
@@ -303,7 +293,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
   }
 
-  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor) throws CoreException {
+  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor)
+    throws CoreException {
     List<Plugin> plugins = facade.getMavenProject(monitor).getBuildPlugins();
     if(plugins != null) {
       for(Plugin plugin : plugins) {
@@ -316,8 +307,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   }
 
   protected boolean isLaunchConfigurationCtx() {
-    for(StackTraceElement e : Thread.currentThread().getStackTrace()) {
-      if("launch".equals(e.getMethodName())) {
+    for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+      if ("launch".equals(e.getMethodName())) {
         return true;
       }
     }
@@ -333,7 +324,8 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   }
 
   private boolean isMavenBundlePluginMojo(String groupId, String artifactId) {
-    return MOJO_GROUP_ID.equals(groupId) && MOJO_ARTIFACT_ID.equals(artifactId);
+    return ("org.scala-tools".equals(groupId) && "maven-scala-plugin".equals(artifactId))
+     || ("net.alchim31.maven".equals(groupId) && "scala-maven-plugin".equals(artifactId));
   }
 
 }
