@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>example</groupId>
+	<artifactId>parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>net.alchim31.maven</groupId>
+					<artifactId>scala-maven-plugin</artifactId>
+					<version>3.0.1</version>
+					<executions>
+						<execution>
+							<id>scala-compile-first</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>add-source</goal>
+								<goal>compile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>scala-test-compile</id>
+							<phase>process-test-resources</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
