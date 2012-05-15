@@ -25,15 +25,13 @@
         <artifactId>scala-maven-plugin</artifactId>
         <goals>
           <goal>add-source</goal>
-          <goal>doc</goal>
-          <goal>genjson</goal>
-          <goal>run</goal>
-          <goal>script</goal>
         </goals>
         <versionRange>[3.0,)</versionRange>
       </pluginExecutionFilter>
       <action>
-        <execute />
+        <execute>
+          <runOnIncremental>false</runOnIncremental>
+        </execute>
       </action>
     </pluginExecution>
     <pluginExecution>
@@ -41,6 +39,10 @@
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
         <goals>
+          <goal>doc</goal>
+          <goal>genjson</goal>
+          <goal>run</goal>
+          <goal>script</goal>
           <goal>console</goal>
           <goal>cc</goal>
           <goal>cctest</goal>
@@ -75,15 +77,13 @@
         <artifactId>maven-scala-plugin</artifactId>
         <goals>
           <goal>add-source</goal>
-          <goal>doc</goal>
-          <goal>genjson</goal>
-          <goal>run</goal>
-          <goal>script</goal>
         </goals>
         <versionRange>[2.0,)</versionRange>
       </pluginExecutionFilter>
       <action>
-        <execute />
+        <execute>
+          <runOnIncremental>false</runOnIncremental>
+        </execute>
       </action>
     </pluginExecution>
     <pluginExecution>
@@ -91,6 +91,10 @@
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
         <goals>
+          <goal>doc</goal>
+          <goal>genjson</goal>
+          <goal>run</goal>
+          <goal>script</goal>
           <goal>console</goal>
           <goal>cc</goal>
           <goal>cctest</goal>
