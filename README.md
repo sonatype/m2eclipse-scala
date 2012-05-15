@@ -25,6 +25,7 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 
 * upgrade tycho (1.14.1), eclipse p2 repository (indigo)
 * modify lifecycle: every goals are modified to "ignore" or to avoid run during incremental compilation 
+* add JavaNature to project if it missing
 
 #### 0.4.0
 
