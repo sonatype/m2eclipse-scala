@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.maven.ide.eclipse.scala</groupId>
   <artifactId>m2eclipse-scala</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <packaging>pom</packaging>
 
   <properties>
-    <tycho.version>0.12.0</tycho.version>
+    <tycho.version>0.14.1</tycho.version>
     <encoding>UTF-8</encoding>
   </properties>
 
@@ -28,7 +28,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.3</version>
+          <version>2.5</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -58,24 +58,12 @@
     <repository>
       <id>scala-ide</id>
       <layout>p2</layout>
-      <!--<url>http://download.scala-ide.org/update-1.0.0-milestones-2.8.1.final</url>-->
-      <url>http://download.scala-ide.org/releases-28/stable/site</url>
+      <url>http://download.scala-ide.org/releases-29/stable/site</url>
+    </repository>
+    <repository>
+      <id>indigo</id>
+      <url>http://download.eclipse.org/releases/indigo/</url>
+      <layout>p2</layout>
     </repository>
   </repositories>
-
-  <profiles>
-    <profile>
-      <id>helios</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <repositories>
-        <repository>
-          <id>helios</id>
-          <url>http://download.eclipse.org/releases/helios/</url>
-          <layout>p2</layout>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
 </project>

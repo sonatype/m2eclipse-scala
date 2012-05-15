@@ -21,6 +21,11 @@ The plugin is "valitaded" by importing into eclipse the samples projects :
 
 ### Changes
 
+#### 0.4.1
+
+* upgrade tycho (1.14.1), eclipse p2 repository (indigo)
+* modify lifecycle: every goals are modified to "ignore" or to avoid run during incremental compilation 
+
 #### 0.4.0
 
 * remove scala-tools.org from catalags
