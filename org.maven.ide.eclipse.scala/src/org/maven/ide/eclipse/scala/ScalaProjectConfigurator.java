@@ -99,11 +99,6 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     return (ids == null)?null : ids.natureId;
   }
 
-  private String scalaLibId() {
-    ScalaPluginIds ids = Activator.getInstance().scalaPluginIds();
-    return (ids == null)?null : ids.containerLibId;
-  }
-
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
     String scalaNature = scalaNatureId();
