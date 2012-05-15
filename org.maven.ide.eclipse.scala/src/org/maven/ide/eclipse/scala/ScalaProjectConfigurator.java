@@ -110,6 +110,9 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
       if (request != null)  {
         IProject project = request.getProject();
         if(!project.hasNature(scalaNature) && isScalaProject(request.getMavenProjectFacade(), monitor)) {
+          if(!project.hasNature("org.eclipse.jdt.core.javanature")) {
+            addNature(project, "org.eclipse.jdt.core.javanature", monitor);
+          }
           addNature(project, scalaNature, monitor);
         }
       }
