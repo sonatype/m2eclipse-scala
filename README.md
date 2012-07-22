@@ -10,7 +10,7 @@ m2eclipse-scala
 
 ### Working configuration
 
-The plugin is "valitaded" by importing into eclipse the samples projects :
+The plugin is "validated" by importing into Eclipse the sample projects :
 
 * [Scala Only (no java)](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-scala-only/)
 * [Scala depends of some java code](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-scala-after-java/)
