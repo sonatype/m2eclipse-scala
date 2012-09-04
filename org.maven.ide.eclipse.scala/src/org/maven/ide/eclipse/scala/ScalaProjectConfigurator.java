@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +28,8 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.ClasspathAttribute;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
@@ -43,10 +46,19 @@ import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
  * @author Sonatype Inc (http://github.com/sonatype/m2eclipse-scala)
  * @author davidB (http://github.com/davidB)
  * @author germanklf  (http://github.com/germanklf)
+ * @author Fred Bricon
  */
 public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
 
 
+  private static final String SCALA_CONTAINER_PATH = "org.scala-ide.sdt.launching.SCALA_CONTAINER";
+
+  private static final String MAVEN_CONTAINER_PATH = "org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER";
+
+  private static String DEPLOYABLE_KEY = "org.eclipse.jst.component.dependency";
+
+  private static String NON_DEPLOYABLE_KEY = "org.eclipse.jst.component.nondependency";
+  
   private Map<String, Integer> mapSourceTypeWeight;
 
   private Map<String, Integer> mapResourceWeight;
@@ -139,6 +151,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         removeScalaFromMavenContainer(classpath);
         addDefaultScalaSourceDirs(facade, classpath, monitor);
         sortContainerScalaJre(project, monitor); //
+        makeScalaLibDeployable(facade, classpath, monitor);
       }
     }
   }
@@ -326,4 +339,84 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
      || ("net.alchim31.maven".equals(groupId) && "scala-maven-plugin".equals(artifactId));
   }
 
+  @SuppressWarnings("restriction")
+  private void makeScalaLibDeployable(IMavenProjectFacade facade, IClasspathDescriptor classpath,
+      IProgressMonitor monitor) throws CoreException {
+    
+    IJavaProject javaProject = JavaCore.create(facade.getProject());
+    if (javaProject == null) {
+      return;
+    }
+    
+    IClasspathEntry scalaLibrary = getContainer(javaProject, SCALA_CONTAINER_PATH);
+
+    if (scalaLibrary == null) {
+      //Really nothing to do here
+      return;
+    }
+    
+    IClasspathEntry mavenLibrary = getContainer(javaProject, MAVEN_CONTAINER_PATH);
+
+    IClasspathAttribute deployableAttribute = getDeployableAttribute(mavenLibrary);
+    //If the Maven Classpath Container is set to be deployed in WTP, then do the same for the Scala one
+    if (deployableAttribute != null) {
+      //Add the deployable attribute only if it's not set already.
+      if (getDeployableAttribute(scalaLibrary) == null) {
+        addDeployableAttribute(javaProject, deployableAttribute, monitor);
+      }
+    }
+    
+  }
+
+  private static void addDeployableAttribute(IJavaProject javaProject, IClasspathAttribute deployableAttribute, IProgressMonitor monitor)
+  throws JavaModelException {
+    if (javaProject == null) return;
+    IClasspathEntry[] cp = javaProject.getRawClasspath();
+    for(int i = 0; i < cp.length; i++ ) {
+      if(IClasspathEntry.CPE_CONTAINER == cp[i].getEntryKind()
+          && SCALA_CONTAINER_PATH.equals(cp[i].getPath().lastSegment())) {
+        LinkedHashMap<String, IClasspathAttribute> attrs = new LinkedHashMap<String, IClasspathAttribute>();
+        for(IClasspathAttribute attr : cp[i].getExtraAttributes()) {
+          //Keep all existing attributes except the non_deployable key
+          if (!attr.getName().equals(NON_DEPLOYABLE_KEY)) {
+            attrs.put(attr.getName(), attr);            
+          }
+        }
+        attrs.put(deployableAttribute.getName(), deployableAttribute);
+        IClasspathAttribute[] newAttrs = attrs.values().toArray(new IClasspathAttribute[attrs.size()]);
+        cp[i] = JavaCore.newContainerEntry(cp[i].getPath(), cp[i].getAccessRules(), newAttrs, cp[i].isExported());
+        break;
+      }
+    }
+    javaProject.setRawClasspath(cp, monitor);
+  }
+  
+  private static IClasspathEntry getContainer(IJavaProject javaProject, String containerPath) throws JavaModelException {
+    IClasspathEntry[] cp = javaProject.getRawClasspath();
+    for(int i = 0; i < cp.length; i++ ) {
+      if(IClasspathEntry.CPE_CONTAINER == cp[i].getEntryKind()
+          && containerPath.equals(cp[i].getPath().lastSegment())) {
+        return cp[i];
+      }
+    }
+    return null;
+  }
+  
+  private static IClasspathAttribute getDeployableAttribute(IClasspathEntry library) {
+    if (library == null) {
+      return null;
+    }
+    
+    IClasspathAttribute[] attributes = library.getExtraAttributes();
+    if (attributes == null || attributes.length == 0) {
+      return null;
+    }
+
+    for(IClasspathAttribute attr : attributes) {
+      if (DEPLOYABLE_KEY.equals(attr.getName())) {
+           return new ClasspathAttribute(attr.getName(), attr.getValue());
+      }
+    }
+    return null;
+  }
 }
