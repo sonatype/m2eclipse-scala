@@ -8,6 +8,7 @@
 
 package org.maven.ide.eclipse.scala;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,7 +20,6 @@ import java.util.Map.Entry;
 
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -31,11 +31,10 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.ClasspathAttribute;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
-import org.eclipse.m2e.core.project.configurator.AbstractProjectConfigurator;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
+import org.eclipse.m2e.jdt.AbstractJavaProjectConfigurator;
 import org.eclipse.m2e.jdt.IClasspathDescriptor;
 import org.eclipse.m2e.jdt.IClasspathEntryDescriptor;
-import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
 
 //TODO check the jre/java version compliance (>= 1.5)
 //TODO check JDT Weaving is enabled (if not enabled, icon of scala file is [J] same as java (and property of  the file display "Type :... Java Source File" )
@@ -48,7 +47,7 @@ import org.eclipse.m2e.jdt.IJavaProjectConfigurator;
  * @author germanklf  (http://github.com/germanklf)
  * @author Fred Bricon
  */
-public class ScalaProjectConfigurator extends AbstractProjectConfigurator implements IJavaProjectConfigurator {
+public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
 
 
   private static final String SCALA_CONTAINER_PATH = "org.scala-ide.sdt.launching.SCALA_CONTAINER";
@@ -58,7 +57,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   private static String DEPLOYABLE_KEY = "org.eclipse.jst.component.dependency";
 
   private static String NON_DEPLOYABLE_KEY = "org.eclipse.jst.component.nondependency";
-  
+
   private Map<String, Integer> mapSourceTypeWeight;
 
   private Map<String, Integer> mapResourceWeight;
@@ -66,6 +65,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   private Comparator<IClasspathEntry> comparator;
 
   public ScalaProjectConfigurator() {
+    super();
     mapSourceTypeWeight = new HashMap<String, Integer>();
     mapSourceTypeWeight.put("src/main/", 9000);
     mapSourceTypeWeight.put("src/test/", 1000);
@@ -113,6 +113,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
 
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
+    super.configure(request, monitor);
     String scalaNature = scalaNatureId();
     if (scalaNature == null) {
       //TODO show an alert to user that he should to install scala-ide plugin;
@@ -149,81 +150,19 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   //        addNature(project, ID_NATURE, monitor);
   //      }
         removeScalaFromMavenContainer(classpath);
-        addDefaultScalaSourceDirs(facade, classpath, monitor);
         sortContainerScalaJre(project, monitor); //
         makeScalaLibDeployable(facade, classpath, monitor);
       }
     }
   }
 
-  /**
-   * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
-   *
-   * @param facade
-   * @throws CoreException
-   */
-  //TODO take a look at http://github.com/sonatype/m2eclipse-extras/blob/master/org.maven.ide.eclipse.temporary.mojos/src/org/maven/ide/eclipse/buildhelper/BuildhelperProjectConfigurator.java
-  private void addDefaultScalaSourceDirs(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
-    IProject project = facade.getProject();
-    IJavaProject javaProject = JavaCore.create(project);
-    IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
-    int initSize = rawClasspath.length;
-
-    // can't use classpath.addSourceEntry because source entry are append under "Maven Dependencies" container
-    IFolder defaultMainSrc = project.getFolder("src/main/scala");
-    if (defaultMainSrc != null && defaultMainSrc.exists()) {
-      IPath p = defaultMainSrc.getFullPath();
-      rawClasspath = addSourceEntry(rawClasspath, p, facade.getOutputLocation());
-    }
-
-    IFolder defaultTestSrc = project.getFolder("src/test/scala");
-    if (defaultTestSrc != null && defaultTestSrc.exists()) {
-      IPath p = defaultTestSrc.getFullPath();
-      rawClasspath = addSourceEntry(rawClasspath, p, facade.getTestOutputLocation());
-    }
-
-    if (rawClasspath.length != initSize) {
-      javaProject.setRawClasspath(rawClasspath, monitor);
-    }
-
+  // workaround to avoid NPE
+  @Override
+  protected IPath getFullPath( IMavenProjectFacade facade, File file ) {
+    if (file == null) return null;
+    return super.getFullPath(facade, file);
   }
-
-  private IClasspathEntry[] addSourceEntry(IClasspathEntry[] rawClasspath, IPath sourcePath, IPath outputLocation) {
-//    if (!classpath.containsPath(sourcePath)) {
-//      classpath.addSourceEntry(sourcePath, facade.getTestOutputLocation(), false);
-//    }
-    IClasspathEntry[] back = rawClasspath;
-    IClasspathEntry entry = JavaCore.newSourceEntry(sourcePath, //
-        new IPath[0], //
-        new IPath[0], //
-        outputLocation, //
-        new IClasspathAttribute[0]
-    );
-    if (!contains(rawClasspath, entry)) {
-      back = add(rawClasspath, entry);
-    }
-    return back;
-  }
-
-  private boolean contains(IClasspathEntry[] rawClasspath, IClasspathEntry entry) {
-    if (entry != null && rawClasspath != null) {
-      for(IClasspathEntry e : rawClasspath) {
-        if (entry.equals(e)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  //TODO add source in the right position (near other source folder and in the alphanum order
-  private IClasspathEntry[] add(IClasspathEntry[] rawClasspath, IClasspathEntry entry) {
-    IClasspathEntry[] back = new IClasspathEntry[rawClasspath.length + 1];
-    back[0] = entry;
-    System.arraycopy(rawClasspath, 0, back, 1, rawClasspath.length);
-    return back;
-  }
-
+  
   private void removeScalaFromMavenContainer(IClasspathDescriptor classpath) {
     classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
       public boolean accept(IClasspathEntryDescriptor descriptor) {
@@ -238,45 +177,6 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         return back;
       }
     });
-  }
-
-//  /**
-//   * To work as maven-scala-plugin, src/main/scala and src/test/scala are added if directory exists
-//   *
-//   * @param facade
-//   * @throws CoreException
-//   */
-//  //TODO take a look at http://github.com/sonatype/m2eclipse-extras/blob/master/org.maven.ide.eclipse.temporary.mojos/src/org/maven/ide/eclipse/buildhelper/BuildhelperProjectConfigurator.java
-//  private void addDefaultScalaSourceDirs(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
-//    IProject project = facade.getProject();
-//
-//    // can't use classpath.addSourceEntry because source entry are append under "Maven Dependencies" container
-//    IResource defaultMainSrc = project.findMember("src/main/scala");
-//    if (defaultMainSrc != null && defaultMainSrc.exists()) {
-//      IPath p = defaultMainSrc.getFullPath();
-//      classpath.addSourceEntry(p, facade.getOutputLocation(), false);
-//    }
-//
-//    IResource defaultTestSrc = project.findMember("src/test/scala");
-//    if (defaultTestSrc != null && defaultTestSrc.exists()) {
-//      IPath p = defaultTestSrc.getFullPath();
-//      classpath.addSourceEntry(p, facade.getTestOutputLocation(), false);
-//    }
-//  }
-
-
-  /**
-   * Not called with m2eclipse 0.10.0
-   * Configure the eclipse project classpath (similar to eclipse IJavaProject.getRawClasspath).
-   */
-  public void configureRawClasspath(ProjectConfigurationRequest request, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
-//    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-//    IProject project = request.getProject();
-//    if(isScalaProject(project)) {
-//      addDefaultScalaSourceDirs(request.getMavenProjectFacade(), classpath, monitor);
-//      sortContainerScalaJre(project, monitor);
-//    }
-
   }
 
   /**
@@ -342,19 +242,19 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
   @SuppressWarnings("restriction")
   private void makeScalaLibDeployable(IMavenProjectFacade facade, IClasspathDescriptor classpath,
       IProgressMonitor monitor) throws CoreException {
-    
+
     IJavaProject javaProject = JavaCore.create(facade.getProject());
     if (javaProject == null) {
       return;
     }
-    
+
     IClasspathEntry scalaLibrary = getContainer(javaProject, SCALA_CONTAINER_PATH);
 
     if (scalaLibrary == null) {
       //Really nothing to do here
       return;
     }
-    
+
     IClasspathEntry mavenLibrary = getContainer(javaProject, MAVEN_CONTAINER_PATH);
 
     IClasspathAttribute deployableAttribute = getDeployableAttribute(mavenLibrary);
@@ -365,7 +265,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         addDeployableAttribute(javaProject, deployableAttribute, monitor);
       }
     }
-    
+
   }
 
   private static void addDeployableAttribute(IJavaProject javaProject, IClasspathAttribute deployableAttribute, IProgressMonitor monitor)
@@ -379,7 +279,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
         for(IClasspathAttribute attr : cp[i].getExtraAttributes()) {
           //Keep all existing attributes except the non_deployable key
           if (!attr.getName().equals(NON_DEPLOYABLE_KEY)) {
-            attrs.put(attr.getName(), attr);            
+            attrs.put(attr.getName(), attr);
           }
         }
         attrs.put(deployableAttribute.getName(), deployableAttribute);
@@ -390,7 +290,7 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
     javaProject.setRawClasspath(cp, monitor);
   }
-  
+
   private static IClasspathEntry getContainer(IJavaProject javaProject, String containerPath) throws JavaModelException {
     IClasspathEntry[] cp = javaProject.getRawClasspath();
     for(int i = 0; i < cp.length; i++ ) {
@@ -401,12 +301,12 @@ public class ScalaProjectConfigurator extends AbstractProjectConfigurator implem
     }
     return null;
   }
-  
+
   private static IClasspathAttribute getDeployableAttribute(IClasspathEntry library) {
     if (library == null) {
       return null;
     }
-    
+
     IClasspathAttribute[] attributes = library.getExtraAttributes();
     if (attributes == null || attributes.length == 0) {
       return null;
