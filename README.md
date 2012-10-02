@@ -21,9 +21,15 @@ The plugin is "validated" by importing into Eclipse the sample projects :
 
 ### Changes
 
+#### 0.4.2
+
+* add support for eclipse WTP contribution of [Fred Bricon](https://github.com/fbricon)
+* upgrade tycho (0.15.0)
+* remove automatic add of "src/main/scala" and "src/test/scala"
+
 #### 0.4.1
 
-* upgrade tycho (1.14.1), eclipse p2 repository (indigo)
+* upgrade tycho (0.14.1), eclipse p2 repository (indigo)
 * modify lifecycle: every goals are modified to "ignore" or to avoid run during incremental compilation 
 * add JavaNature to project if it missing
 
