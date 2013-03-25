@@ -21,6 +21,11 @@ The plugin is "validated" by importing into Eclipse the sample projects :
 
 ### Changes
 
+#### 0.4.3
+
+* add license in feature (EPL)
+* fix a bug in support of "add-source": "src/main/scala" and "src/test/scala" should be added when "add-source" is executed
+
 #### 0.4.2
 
 * add support for eclipse WTP contribution of [Fred Bricon](https://github.com/fbricon)
