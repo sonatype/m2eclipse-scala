@@ -5,8 +5,8 @@
   <parent>
     <groupId>org.maven.ide.eclipse.scala</groupId>
     <artifactId>m2eclipse-scala</artifactId>
-    <version>0.4.2-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>    
+    <version>0.4.3-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>org.maven.ide.eclipse.scala_site</artifactId>
