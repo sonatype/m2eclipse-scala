@@ -24,12 +24,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.ClasspathAttribute;
+import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
 import org.eclipse.m2e.jdt.AbstractJavaProjectConfigurator;
@@ -162,7 +166,7 @@ public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
     if (file == null) return null;
     return super.getFullPath(facade, file);
   }
-  
+
   private void removeScalaFromMavenContainer(IClasspathDescriptor classpath) {
     classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
       public boolean accept(IClasspathEntryDescriptor descriptor) {
@@ -269,26 +273,43 @@ public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
   }
 
   private static void addDeployableAttribute(IJavaProject javaProject, IClasspathAttribute deployableAttribute, IProgressMonitor monitor)
-  throws JavaModelException {
+  throws JavaModelException, CoreException {
     if (javaProject == null) return;
-    IClasspathEntry[] cp = javaProject.getRawClasspath();
-    for(int i = 0; i < cp.length; i++ ) {
-      if(IClasspathEntry.CPE_CONTAINER == cp[i].getEntryKind()
-          && SCALA_CONTAINER_PATH.equals(cp[i].getPath().lastSegment())) {
-        LinkedHashMap<String, IClasspathAttribute> attrs = new LinkedHashMap<String, IClasspathAttribute>();
-        for(IClasspathAttribute attr : cp[i].getExtraAttributes()) {
-          //Keep all existing attributes except the non_deployable key
-          if (!attr.getName().equals(NON_DEPLOYABLE_KEY)) {
-            attrs.put(attr.getName(), attr);
-          }
+    ClasspathContainerInitializer scalaInitializer = JavaCore.getClasspathContainerInitializer(SCALA_CONTAINER_PATH);
+    IPath scalaContainerPath = Path.fromPortableString(SCALA_CONTAINER_PATH);
+    Boolean updateAble = scalaInitializer.canUpdateClasspathContainer(scalaContainerPath, javaProject);
+    final IClasspathContainer scalaLibrary = JavaCore.getClasspathContainer(scalaContainerPath, javaProject);
+    final IClasspathEntry[] cpEntries = scalaLibrary.getClasspathEntries();
+
+    for(int i = 0; i < cpEntries.length; i++ ) {
+      IClasspathEntry cpe = cpEntries[i];
+      LinkedHashMap<String, IClasspathAttribute> attrs = new LinkedHashMap<String, IClasspathAttribute>();
+      for(IClasspathAttribute attr : cpe.getExtraAttributes()) {
+        //Keep all existing attributes except the non_deployable key
+        if(!attr.getName().equals(NON_DEPLOYABLE_KEY)) {
+          attrs.put(attr.getName(), attr);
         }
-        attrs.put(deployableAttribute.getName(), deployableAttribute);
-        IClasspathAttribute[] newAttrs = attrs.values().toArray(new IClasspathAttribute[attrs.size()]);
-        cp[i] = JavaCore.newContainerEntry(cp[i].getPath(), cp[i].getAccessRules(), newAttrs, cp[i].isExported());
-        break;
       }
+      attrs.put(deployableAttribute.getName(), deployableAttribute);
+      IClasspathAttribute[] newAttrs = attrs.values().toArray(new IClasspathAttribute[attrs.size()]);
+      cpEntries[i] = JavaCore.newLibraryEntry(cpe.getPath(), cpe.getSourceAttachmentPath(),
+          cpe.getSourceAttachmentRootPath(), cpe.getAccessRules(), newAttrs, cpe.isExported());
     }
-    javaProject.setRawClasspath(cp, monitor);
+
+    IClasspathContainer candidateScalaContainer = new IClasspathContainer() {
+      public IPath getPath() { return scalaLibrary.getPath(); }
+      public IClasspathEntry[] getClasspathEntries() { return cpEntries; }
+      public String getDescription() { return scalaLibrary.getDescription(); }
+      public int getKind() { return scalaLibrary.getKind(); }
+    };
+
+    if (updateAble){
+      scalaInitializer.requestClasspathContainerUpdate(scalaContainerPath, javaProject, candidateScalaContainer);
+    } else {
+      IJavaProject [] jPArray = { javaProject };
+      IClasspathContainer[] cpArray = { candidateScalaContainer };
+      JavaCore.setClasspathContainer(scalaContainerPath, jPArray, cpArray, null);
+    }
   }
 
   private static IClasspathEntry getContainer(IJavaProject javaProject, String containerPath) throws JavaModelException {
