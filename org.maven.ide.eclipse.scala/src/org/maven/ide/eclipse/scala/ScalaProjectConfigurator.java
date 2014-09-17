@@ -276,6 +276,7 @@ public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
   throws JavaModelException, CoreException {
     if (javaProject == null) return;
     ClasspathContainerInitializer scalaInitializer = JavaCore.getClasspathContainerInitializer(SCALA_CONTAINER_PATH);
+    if (scalaInitializer == null) return;
     IPath scalaContainerPath = Path.fromPortableString(SCALA_CONTAINER_PATH);
     Boolean updateAble = scalaInitializer.canUpdateClasspathContainer(scalaContainerPath, javaProject);
     final IClasspathContainer scalaLibrary = JavaCore.getClasspathContainer(scalaContainerPath, javaProject);
