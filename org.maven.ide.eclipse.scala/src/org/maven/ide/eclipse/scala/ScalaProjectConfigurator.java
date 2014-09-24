@@ -206,11 +206,18 @@ public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
         try {
           IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
 
-          List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(classpathEntries.length);
-          Collections.addAll(entries, classpathEntries);
+          Boolean sorted = true;
+          for (int i = 0; i < classpathEntries.length - 1; i++) {
+            if (comparator.compare(classpathEntries[i], classpathEntries[i+1]) > 0){sorted = false; break;}
+          }
 
-          Collections.sort(entries, comparator);
-          javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), monitor);
+          if(!sorted) {
+            List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(classpathEntries.length);
+            Collections.addAll(entries, classpathEntries);
+
+            Collections.sort(entries, comparator);
+            javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), monitor);
+          }
           return Status.OK_STATUS;
         } catch(JavaModelException e) {
           return Status.CANCEL_STATUS;
