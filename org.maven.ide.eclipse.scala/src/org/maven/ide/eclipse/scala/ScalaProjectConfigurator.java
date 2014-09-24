@@ -24,7 +24,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -33,7 +36,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.ClasspathAttribute;
-import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
 import org.eclipse.m2e.jdt.AbstractJavaProjectConfigurator;
@@ -167,20 +169,27 @@ public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
     return super.getFullPath(facade, file);
   }
 
-  private void removeScalaFromMavenContainer(IClasspathDescriptor classpath) {
-    classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
-      public boolean accept(IClasspathEntryDescriptor descriptor) {
-        boolean back = "org.scala-lang".equals(descriptor.getGroupId());
-        //TODO, use content of Scala Library Container instead of hardcoded value
-        back = back && (
-            "scala-library".equals(descriptor.getArtifactId())
+  private void removeScalaFromMavenContainer(final IClasspathDescriptor classpath) {
+    Job classpathRemoval = new Job("removeScalaLibFromClassPath") {
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        classpath.removeEntry(new IClasspathDescriptor.EntryFilter() {
+          public boolean accept(IClasspathEntryDescriptor descriptor) {
+            boolean back = "org.scala-lang".equals(descriptor.getGroupId());
+            //TODO, use content of Scala Library Container instead of hardcoded value
+            back = back && ("scala-library".equals(descriptor.getArtifactId())
             //|| "scala-compiler".equals(descriptor.getArtifactId())
-            || "scala-dbc".equals(descriptor.getArtifactId())
-            || "scala-swing".equals(descriptor.getArtifactId())
-        );
-        return back;
+                || "scala-dbc".equals(descriptor.getArtifactId()) || "scala-swing".equals(descriptor.getArtifactId()));
+            return back;
+          }
+        });
+
+        return Status.OK_STATUS;
       }
-    });
+    };
+
+    classpathRemoval.setPriority(Job.BUILD);
+    classpathRemoval.schedule();
   }
 
   /**
