@@ -198,15 +198,28 @@ public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
    * Should already be done when adding nature
    * @see scala.tools.eclipse.Nature#configure()
    */
-  private void sortContainerScalaJre(IProject project, IProgressMonitor monitor) throws CoreException {
-    IJavaProject javaProject = JavaCore.create(project);
-    IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
+  private void sortContainerScalaJre(final IProject project, IProgressMonitor monitor) throws CoreException {
+    Job classpathOrdering = new Job("orderScalaArtefactsonClaspath"){
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        IJavaProject javaProject = JavaCore.create(project);
+        try {
+          IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
 
-    List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(classpathEntries.length);
-    Collections.addAll(entries, classpathEntries);
+          List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(classpathEntries.length);
+          Collections.addAll(entries, classpathEntries);
 
-    Collections.sort(entries, comparator);
-    javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), monitor);
+          Collections.sort(entries, comparator);
+          javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), monitor);
+          return Status.OK_STATUS;
+        } catch(JavaModelException e) {
+          return Status.CANCEL_STATUS;
+        }
+      }
+    };
+
+    classpathOrdering.setPriority(Job.BUILD);
+    classpathOrdering.schedule();
   }
 
   private boolean isScalaProject(IProject project) {
