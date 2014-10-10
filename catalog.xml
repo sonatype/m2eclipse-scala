@@ -10,7 +10,7 @@
       <name>scala</name>
       <provider>Sonatype, Inc.</provider>
       <p2>
-        <repositoryUrl>http://alchim31.free.fr/m2e-scala-0.4.3/update-site/m2eclipse-scala/</repositoryUrl>
+        <repositoryUrl>http://alchim31.free.fr/m2e-scala-0.5.0/update-site/m2eclipse-scala/</repositoryUrl>
         <iuId>org.maven.ide.eclipse.scala_feature.feature.group</iuId>
         <lifecycleMappingIU>
           <iuId>org.maven.ide.eclipse.scala</iuId>

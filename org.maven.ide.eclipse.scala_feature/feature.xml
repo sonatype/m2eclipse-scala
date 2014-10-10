@@ -2,7 +2,7 @@
 <feature
       id="org.maven.ide.eclipse.scala_feature"
       label="Maven Integration for Scala IDE"
-      version="0.4.3.qualifier"
+      version="0.5.0.qualifier"
       provider-name="Sonatype, Inc.">
 
    <description url="github.com/sonatype/m2eclipse-scala/">

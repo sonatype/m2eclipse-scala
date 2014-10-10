@@ -4,11 +4,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.maven.ide.eclipse.scala</groupId>
   <artifactId>m2eclipse-scala</artifactId>
-  <version>0.4.3-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
-    <tycho.version>0.20.0</tycho.version>
+    <tycho.version>0.21.0</tycho.version>
     <encoding>UTF-8</encoding>
   </properties>
 

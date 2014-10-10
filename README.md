@@ -21,6 +21,10 @@ The plugin is "validated" by importing into Eclipse the sample projects :
 
 ### Changes
 
+#### 0.5.0
+
+* improve compatibility with scala version auto-detection of Scala-IDE 4.0
+
 #### 0.4.3
 
 * add license in feature (EPL)
