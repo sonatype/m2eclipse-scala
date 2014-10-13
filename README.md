@@ -6,6 +6,7 @@ m2eclipse-scala
 * issue tracker : [m2eclipse-scala at github](https://github.com/sonatype/m2eclipse-scala/issues)
 * mailing-list : [scala-ide-user](http://groups.google.fr/group/scala-ide-user)
 * update-site : [http://alchim31.free.fr/m2e-scala/update-site](http://alchim31.free.fr/m2e-scala/update-site)
+* update-site for previous-version follow pattern : http://alchim31.free.fr/m2e-scala/update-site-<major>.<minor>.<micro>
 
 
 ### Working configuration
@@ -20,6 +21,10 @@ The plugin is "validated" by importing into Eclipse the sample projects :
 * [Lift based project](http://github.com/sonatype/m2eclipse-scala/tree/master/samples/prj-liftbased/) created from a shell created + imported project (used lift-archetype-basic 2.0-scala280-SNAPSHOT)
 
 ### Changes
+
+#### 0.5.1
+
+* remove use of Jobs to update classpath (fix #35 & #36 )
 
 #### 0.5.0
 
