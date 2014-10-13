@@ -35,7 +35,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.ClasspathAttribute;
 import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.ProjectConfigurationRequest;
-import org.eclipse.m2e.jdt.AbstractSourcesGenerationProjectConfigurator;
+import org.eclipse.m2e.jdt.AbstractJavaProjectConfigurator;
 import org.eclipse.m2e.jdt.IClasspathDescriptor;
 import org.eclipse.m2e.jdt.IClasspathEntryDescriptor;
 
@@ -50,7 +50,7 @@ import org.eclipse.m2e.jdt.IClasspathEntryDescriptor;
  * @author germanklf  (http://github.com/germanklf)
  * @author Fred Bricon
  */
-public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectConfigurator {
+public class ScalaProjectConfigurator extends AbstractJavaProjectConfigurator {
 
 
   private static final String SCALA_CONTAINER_PATH = "org.scala-ide.sdt.launching.SCALA_CONTAINER";
