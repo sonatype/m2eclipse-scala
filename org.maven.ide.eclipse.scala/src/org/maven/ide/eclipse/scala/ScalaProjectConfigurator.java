@@ -140,6 +140,7 @@ public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectCo
   /**
    * configure Classpath : contain of "Maven Dependencies" Librairies Container.
    */
+  @Override
   public void configureClasspath(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
     String scalaNature = scalaNatureId();
     if (scalaNature == null) {
@@ -211,8 +212,7 @@ public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectCo
     }
   }
 
-  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor)
-    throws CoreException {
+  private boolean isScalaProject(IMavenProjectFacade facade, IProgressMonitor monitor) throws CoreException {
     List<Plugin> plugins = facade.getMavenProject(monitor).getBuildPlugins();
     if(plugins != null) {
       for(Plugin plugin : plugins) {
@@ -247,8 +247,7 @@ public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectCo
   }
 
   @SuppressWarnings("restriction")
-  private void makeScalaLibDeployable(IMavenProjectFacade facade, IClasspathDescriptor classpath,
-      IProgressMonitor monitor) throws CoreException {
+  private void makeScalaLibDeployable(IMavenProjectFacade facade, IClasspathDescriptor classpath, IProgressMonitor monitor) throws CoreException {
 
     IJavaProject javaProject = JavaCore.create(facade.getProject());
     if (javaProject == null) {
@@ -275,8 +274,7 @@ public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectCo
 
   }
 
-  private static void addDeployableAttribute(IJavaProject javaProject, IClasspathAttribute deployableAttribute, IProgressMonitor monitor)
-  throws JavaModelException, CoreException {
+  private static void addDeployableAttribute(IJavaProject javaProject, IClasspathAttribute deployableAttribute, IProgressMonitor monitor) throws JavaModelException, CoreException {
     if (javaProject == null) return;
     ClasspathContainerInitializer scalaInitializer = JavaCore.getClasspathContainerInitializer(SCALA_CONTAINER_PATH);
     if (scalaInitializer == null) return;
