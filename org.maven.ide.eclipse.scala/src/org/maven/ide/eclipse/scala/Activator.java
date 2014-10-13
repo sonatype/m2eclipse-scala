@@ -4,6 +4,7 @@ package org.maven.ide.eclipse.scala;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Version;
 
 public class Activator extends Plugin {
 
@@ -41,6 +42,7 @@ public class Activator extends Plugin {
         Bundle bundle = bundles[j];
         if(ids.pluginId.equals(bundle.getSymbolicName())) {
           _scalaPluginIds = ids;
+          _scalaPluginIds.version = bundle.getVersion();
         }
       }
     }
@@ -58,6 +60,8 @@ class ScalaPluginIds {
   protected String natureId;
 
   protected String containerLibId;
+  
+  protected Version version;
 
   public ScalaPluginIds(String pluginId, String natureId, String containerLibId) {
     super();

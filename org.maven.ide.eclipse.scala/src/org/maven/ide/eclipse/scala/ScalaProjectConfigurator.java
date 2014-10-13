@@ -69,6 +69,7 @@ public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectCo
 
   public ScalaProjectConfigurator() {
     super();
+
     mapSourceTypeWeight = new HashMap<String, Integer>();
     mapSourceTypeWeight.put("src/main/", 9000);
     mapSourceTypeWeight.put("src/test/", 1000);
@@ -113,6 +114,11 @@ public class ScalaProjectConfigurator extends AbstractSourcesGenerationProjectCo
     ScalaPluginIds ids = Activator.getInstance().scalaPluginIds();
     return (ids == null)?null : ids.natureId;
   }
+  
+//  private boolean shouldManageClasspath() {
+//    Version v4 = new Version(4,0,0);
+//    return v4.compareTo(Activator.getInstance().scalaPluginIds().version) > 0;
+//  }
 
   @Override
   public void configure(ProjectConfigurationRequest request, IProgressMonitor monitor) throws CoreException {
